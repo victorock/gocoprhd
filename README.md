@@ -145,6 +145,7 @@ import (
 
 	apiclient "github.com/victorock/gocoprhd/client"
   "github.com/victorock/gocoprhd/client/block"
+  "github.com/victorock/gocoprhd/client/compute"
   "github.com/victorock/gocoprhd/client/vdc"
   "github.com/victorock/gocoprhd/models"
 )
@@ -204,19 +205,37 @@ func TestListVolumes(t *testing.T) {
       log.Fatal(err)
   }
   fmt.Printf("%#v\n", resp.Payload)
+  fmt.Printf("######################\n")
+  for _, v := range resp.Payload.ID {
+    fmt.Printf("Volume ID: %#v\n", v)
+  }
+  fmt.Printf("######################\n")
+
 }
 ```
 
 ### Use the client to import the Service
 
-Import the library for the Block Service:
+Import the library for the Client:
+```
+import (
+    ...
+    client "github.com/emccode/gocoprhd/client"
+    ...
+)
+```
+
+Import the library for the Services:
 ```
 import (
     ...
     client "github.com/emccode/gocoprhd/client/block"
+    client "github.com/emccode/gocoprhd/client/compute"
+    client "github.com/emccode/gocoprhd/client/vdc"
     ...
 )
 ```
+
 
 Import the Models Library ([See Definitions] (./swagger-spec/coprhd.yml))
 ```
@@ -301,7 +320,7 @@ Execute the request with the populated struct:
 - The Host and Initiator entries already exists in the Interface.
 
 ## TODO
-Extend the APIs coverage in the swagger-spec/coprhd.yml for Compute:
+1- Extend the APIs coverage in the swagger-spec/coprhd.yml for Compute:
 
 Host:
 - Create Host
@@ -312,6 +331,8 @@ Initiator:
 - Create Initiator
 - Show Initiator
 - List Initiators
+
+2- Extend the API to cover File Services
 
 ## Contribution
 Create a fork of the project into your own repository.
