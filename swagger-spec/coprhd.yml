@@ -695,9 +695,85 @@ definitions:
         type: array
         items:
           type: string
-# TODO: UPDATE THE VOLUME OBJECT DETAILS
   Volume:
-    type: object
+    allOf:
+      - $ref: '#/definitions/Resource'
+      - type: object
+        properties:
+          vdc:
+            $ref: '#/definitions/Resource'
+          tenant:
+            $ref: '#/definitions/Resource'
+          project:
+            $ref: '#/definitions/Resource'
+          varray:
+            $ref: '#/definitions/Resource'
+          storage_pool:
+            $ref: '#/definitions/Resource'
+          vpool:
+            $ref: '#/definitions/Resource'
+          # Config if protection is type Resource
+          protection:
+            $ref: '#/definitions/Resource'
+          inactive:
+            type: boolean
+          global:
+            type: boolean
+          remote:
+            type: boolean
+          internal:
+            type: boolean
+          supports_snapshot_sessions:
+            type: boolean
+          is_composite:
+            type: boolean
+          thinly_provisioned:
+            type: boolean
+          creation_time:
+            type: integer
+          storage_controller:
+            type: string
+          wwn:
+            type: string
+          device_label:
+            type: string
+          native_id:
+            type: string
+          replication_group_instance:
+            type: string
+          provisioned_capacity_gb:
+            type: string
+          allocated_capacity_gb:
+            type: string
+          requested_capacity_gb:
+            type: string
+          pre_allocation_size_gb:
+            type: string
+          access_state:
+            type: string
+          system_type:
+            type: string
+          protocols:
+            type: array
+            items:
+              type: string
+              enum:
+                - FC
+                # Confirm the iSCSI Word
+                - iSCSI
+                - ScaleIO
+          tags:
+            type: array
+            items:
+              type: string
+          high_availability_backing_volumes:
+            type: array
+            items:
+              type: string
+          volume_groups:
+            type: array
+            items:
+              type: string
   VolumeExports:
     type: object
     properties:
@@ -709,39 +785,26 @@ definitions:
             hlu:
               type: integer
             initiator:
-              type: object
+              allOf:
+                - $ref: '#/definitions/Resource'
+                - type: object
               properties:
-                id:
-                  type: string
-                link:
-                  $ref: '#/definitions/Link'
                 port:
                   type: string
             export:
-              type: object
-              properties:
-                id:
-                  type: string
-                link:
-                  $ref: '#/definitions/Link'
-                name:
-                  type: string
+              $ref: '#/definitions/Resource'
             device:
-              type: object
+              allOf:
+                - $ref: '#/definitions/Resource'
+                - type: object
               properties:
-                id:
-                  type: string
-                link:
-                  $ref: '#/definitions/Link'
                 wwn:
                   type: string
             target:
-              type: object
+              allOf:
+                - $ref: '#/definitions/Resource'
+                - type: object
               properties:
-                id:
-                  type: string
-                link:
-                  $ref: '#/definitions/Link'
                 port:
                   type: string
             san_zone_name:
@@ -761,70 +824,18 @@ definitions:
         items:
           type: string
   Snapshot:
-    type: object
+    allOf:
+      - $ref: '#/definitions/Volume'
+      - type: object
     properties:
-      id:
-        type: string
-      name:
-        type: string
-      link:
-        $ref: '#/definitions/Link'
-      inactive:
-        type: boolean
-      tags:
-        type: array
-        items:
-          type: string
-      wwn:
-        type: string
-      protocols:
-        type: array
-        items:
-          type: string
-  #      enum:
-  #        - FC
-  #        - SCALEIO
-  #        - iSCSI
-      parent:
-        type: object
-        properties:
-          id:
-            type: string
-          link:
-            $ref: '#/definitions/Link'
-      project:
-        type: object
-        properties:
-          id:
-            type: string
-          link:
-            $ref: '#/definitions/Link'
-      creation_time:
-        type: string
-      storage_controller:
-        type: string
-      varray:
-        type: object
-        properties:
-          id:
-            type: string
-          link:
-            $ref: '#/definitions/Link'
-      device_label:
-        type: string
-      native_id:
-        type: string
-      consistency_group:
-        type: object
-        properties:
-          id:
-            type: string
-          link:
-            $ref: '#/definitions/Link'
-      source_native_id:
-        type: string
       is_sync_active:
         type: boolean
+      source_native_id:
+        type: string
+      snapset_label:
+        type: string
+      replica_state:
+        type: string
   ExpandVolume:
     type: object
     properties:

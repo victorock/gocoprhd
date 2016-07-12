@@ -77,11 +77,11 @@ func TestInit(t *testing.T) {
   }
   fmt.Printf("%#v\n", resp.Payload)
 
+  fmt.Printf("######################\n")
   for _, v := range resp.Payload.ID {
-    fmt.Printf("#####################\n")
     fmt.Printf("Volume ID: %#v\n", v)
   }
-
+  fmt.Printf("######################\n")
 }
 
 // Test Get Volumes
@@ -96,11 +96,11 @@ func TestListVolumes(t *testing.T) {
       log.Fatal(err)
   }
   fmt.Printf("%#v\n", resp.Payload)
-
+  fmt.Printf("######################\n")
   for _, v := range resp.Payload.ID {
-    fmt.Printf("#####################\n")
     fmt.Printf("Volume ID: %#v\n", v)
   }
+  fmt.Printf("######################\n")
 
 }
 
@@ -117,12 +117,11 @@ func TestListSnapshots(t *testing.T) {
 	}
 
   fmt.Printf("%#v\n", resp.Payload)
-
+  fmt.Printf("######################\n")
   for _, v := range resp.Payload.ID {
-    fmt.Printf("#####################\n")
     fmt.Printf("Snapshot ID: %#v\n", v)
   }
-
+  fmt.Printf("######################\n")
 }
 
 // Test Get Snapshots
@@ -167,10 +166,11 @@ func TestListTasks(t *testing.T) {
 	}
 
   fmt.Printf("%#v\n", resp.Payload)
+  fmt.Printf("######################\n")
   for _, t := range resp.Payload.Task {
-    fmt.Printf("######################\n")
     fmt.Printf("Task ID: %#v\n", t.ID)
   }
+  fmt.Printf("######################\n")
 }
 
 // Test Get Tasks
@@ -207,8 +207,8 @@ func TestListVolumeExports(t *testing.T) {
 		log.Fatal(err)
 	}
   fmt.Printf("%#v\n", resp.Payload)
+  fmt.Printf("######################\n")
   for _, exp := range resp.Payload.Itl {
-    fmt.Printf("######################\n")
     fmt.Printf("Initiator ID: %#v\n", exp.Initiator.ID)
     fmt.Printf("Initiator Port: %#v\n", exp.Initiator.Port)
     fmt.Printf("Export ID: %#v\n", exp.Export.ID)
@@ -216,6 +216,7 @@ func TestListVolumeExports(t *testing.T) {
     fmt.Printf("Device ID: %#v\n", exp.Device.ID)
     fmt.Printf("Target ID: %#v\n", exp.Target.ID)
   }
+  fmt.Printf("######################\n")
 }
 
 func TestCreateVolumeSnapshot(t *testing.T) {
@@ -259,6 +260,11 @@ func TestListVolumeSnapshots(t *testing.T) {
 		log.Fatal(err)
 	}
   fmt.Printf("%#v\n", resp.Payload)
+  fmt.Printf("######################\n")
+  for _, snap := range resp.Payload.Snapshot {
+    fmt.Printf("Snapshot ID: %#v\n", snap.ID)
+  }
+  fmt.Printf("######################\n")
 }
 
 func TestDeleteSnapshot(t *testing.T) {
@@ -268,10 +274,70 @@ func TestDeleteSnapshot(t *testing.T) {
 
   // Create Object to Request
   deleteSnapshotParams := block.NewDeleteSnapshotParams().
-                                      WithID("urn:storageos:Volume:9435e860-e729-478f-8a1b-350da9ce6dd9:vdc1")
+                                WithID("urn:storageos:BlockSnapshot:c18f641f-921e-419c-a8bd-4ed5ccb292e7:vdc1")
 
 	//use any function to do REST operations
 	resp, err := client.Block.DeleteSnapshot(deleteSnapshotParams, authInfo)
+	if err != nil {
+		log.Fatal(err)
+	}
+  fmt.Printf("%#v\n", resp.Payload)
+}
+
+func TestShowVolume(t *testing.T) {
+
+  // Init
+  client, authInfo := Init()
+
+  // Create Object to Request
+  showVolumeParams := block.NewShowVolumeParams().
+                            WithID("urn:storageos:Volume:9435e860-e729-478f-8a1b-350da9ce6dd9:vdc1")
+
+	//use any function to do REST operations
+	resp, err := client.Block.ShowVolume(showVolumeParams, authInfo)
+	if err != nil {
+		log.Fatal(err)
+	}
+  fmt.Printf("%#v\n", resp.Payload)
+}
+
+func TestShowSnapshot(t *testing.T) {
+
+  // Init
+  client, authInfo := Init()
+
+  // Create Object to Request
+  showSnapshotParams := block.NewShowSnapshotParams().
+                            WithID("urn:storageos:BlockSnapshot:b88d6b52-38c4-4456-a92b-110bb4265a2a:vdc1")
+
+	//use any function to do REST operations
+	resp, err := client.Block.ShowSnapshot(showSnapshotParams, authInfo)
+	if err != nil {
+		log.Fatal(err)
+	}
+  fmt.Printf("%#v\n", resp.Payload)
+}
+
+func TestCreateExport(t *testing.T) {
+
+  // Init
+  client, authInfo := Init()
+
+  // Construct Request Parameters
+  b := &models.CreateExport {
+          Name: "coprhd_snap_vol01",
+          CreateInactive: true,
+          ReadOnly: false,
+          Type: "rp",
+        }
+
+  // Create Object to Request
+  createVolumeSnapshotParams := block.NewCreateVolumeSnapshotParams().
+                                      WithID("urn:storageos:Volume:9435e860-e729-478f-8a1b-350da9ce6dd9:vdc1").
+                                      WithBody(b)
+
+	//use any function to do REST operations
+	resp, err := client.Block.CreateVolumeSnapshot(createVolumeSnapshotParams, authInfo)
 	if err != nil {
 		log.Fatal(err)
 	}

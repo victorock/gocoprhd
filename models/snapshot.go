@@ -5,7 +5,6 @@ package models
 
 import (
 	strfmt "github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
 
 	"github.com/go-openapi/errors"
 )
@@ -15,399 +14,35 @@ import (
 swagger:model Snapshot
 */
 type Snapshot struct {
-
-	/* consistency group
-	 */
-	ConsistencyGroup *SnapshotConsistencyGroup `json:"consistency_group,omitempty"`
-
-	/* creation time
-	 */
-	CreationTime string `json:"creation_time,omitempty"`
-
-	/* device label
-	 */
-	DeviceLabel string `json:"device_label,omitempty"`
-
-	/* id
-	 */
-	ID string `json:"id,omitempty"`
-
-	/* inactive
-	 */
-	Inactive bool `json:"inactive,omitempty"`
+	Volume
 
 	/* is sync active
 	 */
 	IsSyncActive bool `json:"is_sync_active,omitempty"`
 
-	/* link
+	/* replica state
 	 */
-	Link *Link `json:"link,omitempty"`
+	ReplicaState string `json:"replica_state,omitempty"`
 
-	/* name
+	/* snapset label
 	 */
-	Name string `json:"name,omitempty"`
-
-	/* native id
-	 */
-	NativeID string `json:"native_id,omitempty"`
-
-	/* parent
-	 */
-	Parent *SnapshotParent `json:"parent,omitempty"`
-
-	/* project
-	 */
-	Project *SnapshotProject `json:"project,omitempty"`
-
-	/* protocols
-	 */
-	Protocols []string `json:"protocols,omitempty"`
+	SnapsetLabel string `json:"snapset_label,omitempty"`
 
 	/* source native id
 	 */
 	SourceNativeID string `json:"source_native_id,omitempty"`
-
-	/* storage controller
-	 */
-	StorageController string `json:"storage_controller,omitempty"`
-
-	/* tags
-	 */
-	Tags []string `json:"tags,omitempty"`
-
-	/* varray
-	 */
-	Varray *SnapshotVarray `json:"varray,omitempty"`
-
-	/* wwn
-	 */
-	Wwn string `json:"wwn,omitempty"`
 }
 
 // Validate validates this snapshot
 func (m *Snapshot) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateConsistencyGroup(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
-	if err := m.validateLink(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
-	if err := m.validateParent(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
-	if err := m.validateProject(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
-	if err := m.validateProtocols(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
-	if err := m.validateTags(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
-	if err := m.validateVarray(formats); err != nil {
-		// prop
+	if err := m.Volume.Validate(formats); err != nil {
 		res = append(res, err)
 	}
 
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
-	return nil
-}
-
-func (m *Snapshot) validateConsistencyGroup(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.ConsistencyGroup) { // not required
-		return nil
-	}
-
-	if m.ConsistencyGroup != nil {
-
-		if err := m.ConsistencyGroup.Validate(formats); err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *Snapshot) validateLink(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.Link) { // not required
-		return nil
-	}
-
-	if m.Link != nil {
-
-		if err := m.Link.Validate(formats); err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *Snapshot) validateParent(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.Parent) { // not required
-		return nil
-	}
-
-	if m.Parent != nil {
-
-		if err := m.Parent.Validate(formats); err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *Snapshot) validateProject(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.Project) { // not required
-		return nil
-	}
-
-	if m.Project != nil {
-
-		if err := m.Project.Validate(formats); err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *Snapshot) validateProtocols(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.Protocols) { // not required
-		return nil
-	}
-
-	return nil
-}
-
-func (m *Snapshot) validateTags(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.Tags) { // not required
-		return nil
-	}
-
-	return nil
-}
-
-func (m *Snapshot) validateVarray(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.Varray) { // not required
-		return nil
-	}
-
-	if m.Varray != nil {
-
-		if err := m.Varray.Validate(formats); err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-/*SnapshotConsistencyGroup snapshot consistency group
-
-swagger:model SnapshotConsistencyGroup
-*/
-type SnapshotConsistencyGroup struct {
-
-	/* id
-	 */
-	ID string `json:"id,omitempty"`
-
-	/* link
-	 */
-	Link *Link `json:"link,omitempty"`
-}
-
-// Validate validates this snapshot consistency group
-func (m *SnapshotConsistencyGroup) Validate(formats strfmt.Registry) error {
-	var res []error
-
-	if err := m.validateLink(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (m *SnapshotConsistencyGroup) validateLink(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.Link) { // not required
-		return nil
-	}
-
-	if m.Link != nil {
-
-		if err := m.Link.Validate(formats); err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-/*SnapshotParent snapshot parent
-
-swagger:model SnapshotParent
-*/
-type SnapshotParent struct {
-
-	/* id
-	 */
-	ID string `json:"id,omitempty"`
-
-	/* link
-	 */
-	Link *Link `json:"link,omitempty"`
-}
-
-// Validate validates this snapshot parent
-func (m *SnapshotParent) Validate(formats strfmt.Registry) error {
-	var res []error
-
-	if err := m.validateLink(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (m *SnapshotParent) validateLink(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.Link) { // not required
-		return nil
-	}
-
-	if m.Link != nil {
-
-		if err := m.Link.Validate(formats); err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-/*SnapshotProject snapshot project
-
-swagger:model SnapshotProject
-*/
-type SnapshotProject struct {
-
-	/* id
-	 */
-	ID string `json:"id,omitempty"`
-
-	/* link
-	 */
-	Link *Link `json:"link,omitempty"`
-}
-
-// Validate validates this snapshot project
-func (m *SnapshotProject) Validate(formats strfmt.Registry) error {
-	var res []error
-
-	if err := m.validateLink(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (m *SnapshotProject) validateLink(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.Link) { // not required
-		return nil
-	}
-
-	if m.Link != nil {
-
-		if err := m.Link.Validate(formats); err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-/*SnapshotVarray snapshot varray
-
-swagger:model SnapshotVarray
-*/
-type SnapshotVarray struct {
-
-	/* id
-	 */
-	ID string `json:"id,omitempty"`
-
-	/* link
-	 */
-	Link *Link `json:"link,omitempty"`
-}
-
-// Validate validates this snapshot varray
-func (m *SnapshotVarray) Validate(formats strfmt.Registry) error {
-	var res []error
-
-	if err := m.validateLink(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (m *SnapshotVarray) validateLink(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.Link) { // not required
-		return nil
-	}
-
-	if m.Link != nil {
-
-		if err := m.Link.Validate(formats); err != nil {
-			return err
-		}
-	}
-
 	return nil
 }

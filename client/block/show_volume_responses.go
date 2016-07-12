@@ -49,7 +49,7 @@ func NewShowVolumeOK() *ShowVolumeOK {
 Volumes Details
 */
 type ShowVolumeOK struct {
-	Payload models.Volume
+	Payload *models.Volume
 }
 
 func (o *ShowVolumeOK) Error() string {
@@ -58,8 +58,10 @@ func (o *ShowVolumeOK) Error() string {
 
 func (o *ShowVolumeOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
+	o.Payload = new(models.Volume)
+
 	// response payload
-	if err := consumer.Consume(response.Body(), &o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
 		return err
 	}
 

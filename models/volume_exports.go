@@ -72,7 +72,7 @@ type VolumeExportsItlItems0 struct {
 
 	/* export
 	 */
-	Export *VolumeExportsItlItems0Export `json:"export,omitempty"`
+	Export *Resource `json:"export,omitempty"`
 
 	/* hlu
 	 */
@@ -190,14 +190,7 @@ func (m *VolumeExportsItlItems0) validateTarget(formats strfmt.Registry) error {
 swagger:model VolumeExportsItlItems0Device
 */
 type VolumeExportsItlItems0Device struct {
-
-	/* id
-	 */
-	ID string `json:"id,omitempty"`
-
-	/* link
-	 */
-	Link *Link `json:"link,omitempty"`
+	Resource
 
 	/* wwn
 	 */
@@ -208,80 +201,13 @@ type VolumeExportsItlItems0Device struct {
 func (m *VolumeExportsItlItems0Device) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateLink(formats); err != nil {
-		// prop
+	if err := m.Resource.Validate(formats); err != nil {
 		res = append(res, err)
 	}
 
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
-	return nil
-}
-
-func (m *VolumeExportsItlItems0Device) validateLink(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.Link) { // not required
-		return nil
-	}
-
-	if m.Link != nil {
-
-		if err := m.Link.Validate(formats); err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-/*VolumeExportsItlItems0Export volume exports itl items0 export
-
-swagger:model VolumeExportsItlItems0Export
-*/
-type VolumeExportsItlItems0Export struct {
-
-	/* id
-	 */
-	ID string `json:"id,omitempty"`
-
-	/* link
-	 */
-	Link *Link `json:"link,omitempty"`
-
-	/* name
-	 */
-	Name string `json:"name,omitempty"`
-}
-
-// Validate validates this volume exports itl items0 export
-func (m *VolumeExportsItlItems0Export) Validate(formats strfmt.Registry) error {
-	var res []error
-
-	if err := m.validateLink(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (m *VolumeExportsItlItems0Export) validateLink(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.Link) { // not required
-		return nil
-	}
-
-	if m.Link != nil {
-
-		if err := m.Link.Validate(formats); err != nil {
-			return err
-		}
-	}
-
 	return nil
 }
 
@@ -290,14 +216,7 @@ func (m *VolumeExportsItlItems0Export) validateLink(formats strfmt.Registry) err
 swagger:model VolumeExportsItlItems0Initiator
 */
 type VolumeExportsItlItems0Initiator struct {
-
-	/* id
-	 */
-	ID string `json:"id,omitempty"`
-
-	/* link
-	 */
-	Link *Link `json:"link,omitempty"`
+	Resource
 
 	/* port
 	 */
@@ -308,8 +227,7 @@ type VolumeExportsItlItems0Initiator struct {
 func (m *VolumeExportsItlItems0Initiator) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateLink(formats); err != nil {
-		// prop
+	if err := m.Resource.Validate(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -319,35 +237,12 @@ func (m *VolumeExportsItlItems0Initiator) Validate(formats strfmt.Registry) erro
 	return nil
 }
 
-func (m *VolumeExportsItlItems0Initiator) validateLink(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.Link) { // not required
-		return nil
-	}
-
-	if m.Link != nil {
-
-		if err := m.Link.Validate(formats); err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
 /*VolumeExportsItlItems0Target volume exports itl items0 target
 
 swagger:model VolumeExportsItlItems0Target
 */
 type VolumeExportsItlItems0Target struct {
-
-	/* id
-	 */
-	ID string `json:"id,omitempty"`
-
-	/* link
-	 */
-	Link *Link `json:"link,omitempty"`
+	Resource
 
 	/* port
 	 */
@@ -358,29 +253,12 @@ type VolumeExportsItlItems0Target struct {
 func (m *VolumeExportsItlItems0Target) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateLink(formats); err != nil {
-		// prop
+	if err := m.Resource.Validate(formats); err != nil {
 		res = append(res, err)
 	}
 
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
-	return nil
-}
-
-func (m *VolumeExportsItlItems0Target) validateLink(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.Link) { // not required
-		return nil
-	}
-
-	if m.Link != nil {
-
-		if err := m.Link.Validate(formats); err != nil {
-			return err
-		}
-	}
-
 	return nil
 }
