@@ -1,0 +1,1023 @@
+swagger: '2.0'
+info:
+  title: CoprHD API
+  description: CoprHD core API
+  version: "3.0.0"
+schemes:
+  - http
+  - https
+basePath: /
+produces:
+  - application/json
+  # x-gzip explicitly for files once the bugs listed
+  #   in comments below are fixed by swagger team.
+  - application/x-gzip
+consumes:
+  - application/json
+securityDefinitions:
+  auth_token:
+    type: apiKey
+    name: X-SDS-AUTH-TOKEN
+    in: header
+security:
+  - auth_token: []
+paths:
+  /login.json:
+    get:
+      summary: |
+        Login and Get Token
+      description: |
+        Authenticates the user and obtains authentication token to use in
+        subsequent api calls. If valid X-SDS-AUTH-TOKEN is provided, that will be
+        used instead of creating the new authentication token. Setting the
+        queryParam "using-cookies" to "true" sets the following cookies in the
+        response.
+      tags:
+        - authentication
+      operationId: Login
+      responses:
+        200:
+          description: User Name Object
+          schema:
+            type: object
+          headers:
+            X-SDS-AUTH-TOKEN:
+              description: User Token
+              type: string
+        default:
+          description: Error Message
+          schema:
+            $ref: '#/definitions/Error'
+  /block/volumes.json:
+    post:
+      summary: |
+        Create Volume
+      description: |
+        "The fundamental abstraction in the Block Store is a volume.
+        A volume is a unit of block storage capacity that has been allocated by
+        a consumer to a project. This API allows the user to create one or more
+        volumes. The volumes are created in the same storage pool.
+        NOTE=This is an asynchronous operation."
+      tags:
+        - block
+      operationId: CreateVolume
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/CreateVolume'
+      responses:
+        202:
+          description: Task Object
+          schema:
+            $ref: '#/definitions/Tasks'
+        default:
+          description: Error Message
+          schema:
+            $ref: '#/definitions/Error'
+  /block/volumes/{id}/protection/snapshots.json:
+    post:
+      summary: |
+        Create Volume Snapshot
+      description: |
+        A snapshot is a point-in-time copy of a volume. Snapshots are intended
+        for short-term operational recovery and are typically implemented using
+        lightweight, fast capabilities native to the underlying storage
+        platforms. Like a volume, a snapshot can be exported to initiators,
+        and you can delete it. A snapshots lifetime is tied to the original
+        volume. When the original volume is deleted all of its snapshots will
+        also be deleted. A snapshot is associated with the same project as the
+        original volume. A volume may be restored in place based on a snapshot.
+        The snapshot must have come from the volume. A new volume may be created
+         using a snapshot as a template. See multi-volume consistent snapshots
+         for a description of an advanced feature to snapshot multiple volumes
+         at once. NOTE: This is an asynchronous operation.
+      tags:
+        - block
+      operationId: CreateVolumeSnapshot
+      parameters:
+        - name: id
+          description: The URN of a ViPR/CoprHD Volume
+          in: path
+          type: string
+          required: true
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/CreateVolumeSnapshot'
+      responses:
+        202:
+          description: Task Object
+          schema:
+            $ref: '#/definitions/Tasks'
+        default:
+          description: Error Message
+          schema:
+            $ref: '#/definitions/Error'
+    get:
+      summary: |
+        List Volume Snapshot
+      description: |
+        List volume snapshots
+      tags:
+        - block
+      operationId: ListVolumeSnapshots
+      parameters:
+        - name: id
+          description: The URN of a ViPR/CoprHD Volume
+          in: path
+          type: string
+          required: true
+      responses:
+        200:
+          description: List Volume Snapshot
+          schema:
+            $ref: '#/definitions/VolumeSnapshots'
+        default:
+          description: Error Message
+          schema:
+            $ref: '#/definitions/Error'
+  /block/volumes/bulk.json:
+    get:
+      summary: |
+        List Volumes
+      description: |
+        Retrieve all ids of this type of resources.
+      tags:
+        - block
+      operationId: ListVolumes
+      responses:
+        200:
+          description: List of Volumes Ids
+          schema:
+            $ref: '#/definitions/Volumes'
+        default:
+          description: Error Message
+          schema:
+            $ref: '#/definitions/Error'
+  /block/volumes/{id}.json:
+    get:
+      summary: |
+        Show Volume
+      description: |
+        Show the details of a specific volume
+      tags:
+        - block
+      operationId: ShowVolume
+      parameters:
+        - name: id
+          description: The URN of a ViPR/CoprHD Volume
+          in: path
+          type: string
+          required: true
+      responses:
+        200:
+          description: Volumes Details
+          schema:
+            $ref: '#/definitions/Volume'
+        default:
+          description: Error Message
+          schema:
+            $ref: '#/definitions/Error'
+  /block/volumes/{id}/protection/full-copies.json:
+    post:
+      summary: |
+        Create Full Copy
+      description: |
+        Create a full copy of the specified volume.
+      tags:
+        - block
+      operationId: CreateVolumeFullCopy
+      parameters:
+        - name: id
+          description: The URN of a ViPR/CoprHD Task
+          in: path
+          type: string
+          required: true
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/CreateVolumeFullCopy'
+      responses:
+        202:
+          description: Task Object
+          schema:
+            $ref: '#/definitions/Tasks'
+        default:
+          description: Error Message
+          schema:
+            $ref: '#/definitions/Error'
+  /block/volumes/{id}/exports.json:
+    get:
+      summary: |
+        List Volume Exports
+      description: |
+        "Return all the export information related to this volume.
+        This will be in the form of a list of initiator / target pairs for all the
+        initiators that have been paired with a target storage port."
+      tags:
+        - block
+      operationId: ListVolumeExports
+      parameters:
+        - name: id
+          description: The URN of a ViPR/CoprHD Volume
+          in: path
+          type: string
+          required: true
+      responses:
+        200:
+          description: Volume Exports
+          schema:
+            $ref: '#/definitions/VolumeExports'
+        default:
+          description: Error Message
+          schema:
+            $ref: '#/definitions/Error'
+  /block/volumes/{id}/expand.json:
+    post:
+      summary: |
+        Expand Volume
+      description: |
+        "Request to expand volume capacity to the specified size.
+        NOTE: This is an asynchronous operation."
+      tags:
+        - block
+      operationId: ExpandVolume
+      parameters:
+        - name: id
+          description: The URN of a ViPR/CoprHD Volume
+          in: path
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/ExpandVolume'
+      responses:
+        202:
+          description: Task Object
+          schema:
+            $ref: '#/definitions/Task'
+        default:
+          description: Error Message
+          schema:
+            $ref: '#/definitions/Error'
+  /block/volumes/{id}/deactivate.json:
+    post:
+      summary: |
+        Delete Volume
+      description: |
+        Deactivate a volume, this will move the volume to a "marked-for-delete"
+        state after the deletion happens on the array side. The volume will be
+        deleted from the database when all references to this volume of type
+        BlockSnapshot and ExportGroup are deleted. If "?force=true" is added to
+        the path, it will force the delete of internal volumes that have the
+        SUPPORTS_FORCE flag. NOTE: This is an asynchronous operation.
+      tags:
+        - block
+      operationId: DeleteVolume
+      parameters:
+        - name: id
+          description: The URN of a ViPR/CoprHD Volume
+          in: path
+          type: string
+          required: true
+      responses:
+        202:
+          description: Task Object
+          schema:
+            $ref: '#/definitions/Tasks'
+        default:
+          description: Error Message
+          schema:
+            $ref: '#/definitions/Error'
+  /block/exports.json:
+    post:
+      summary: |
+        Create Export
+      description: |
+        Block export method is use to export one or more volumes to one or more
+        hosts. This is a required step for a host to be able to access a block
+        volume, although in some scenarios, additional configurations may be
+        required. There are three main types of export group to meet the common
+        use cases:
+
+        Create an initiator type export group so that a single host can see one
+        or more volumes. An example would be an export group for a host boot lun
+        or a private volume that is meant to be used by only one host. The
+        assumption is, in this case the user wants the boot or private volume
+        to be accessed via known initiators. For this type of export, the
+        request object is expected to have only initiators (i.e. no hosts or
+        clusters). Further, the initiators are expected to belong to the same
+        host. While an initiator type export group can belong to only one host,
+        this does not mean the host can only have the initiator type export
+        group. A hosts can be part of many export groups of any type. The export
+        group type {@link ExportGroupType#Initiator} should be specified in the
+        request for this type of export.
+
+        Create an export group so that one or more hosts, which are not part of
+        a cluster, can access one or more volumes. This is the use case of a
+        shared data lun. In this case, it is assumed that the user wants all the
+        hosts initiators that are connected to the storage array (up to the
+        maximum specified by the virtual pool) to be able to access the volume.
+        The export group type {@link ExportGroupType#Host} should be specified
+        in the request for this type of export.
+
+        Create an export group so that one or more clusters of hosts can access
+        one or more volumes. This is the same use case of shared data lun as the
+        {@link ExportGroupType#Host} use case with the exception that the user
+        is managing a cluster of hosts as opposed to individual hosts. In this
+        case, the same assumption about the initiators as in the previous case
+        is made. The export group type {@link ExportGroupType#Cluster} should be
+        specified in the request for this type of export.
+
+        Note that the above discussion only mentions volumes but mirrors and
+        snapshots can also be used in export groups.
+
+        Once a block export is created, following incremental changes can be
+        applied to it:
+          - add volume or volume snapshot to the shared storage pool
+          - remove volume or volume snapshot from the shared storage pool
+          - add new server to the cluster by adding initiator from that server
+            to the block export - remove visibility of shared storage to a
+            server by removing initiators from the block export
+
+        Similar to block storage provisioning, block export is also created
+        within the scope of a varray. Hence, volumes and snapshots being added
+        to a block export must belong to the same varray. Fibre Channel and
+        iSCSI initiators must be part of SANs belonging to the same varray as
+        block export.
+
+        For Fibre Channel initiators, SAN zones will also be created when the
+        export group is created if the networks are discovered and:
+
+        at least one of the Network Systems can provision the Vsan or Fabric in
+        which the each endpoint exists, and the VirtualArray has
+        "auto_san_zoning" set to true.
+
+        The SAN zones each consists of an initiator (from the arguments) and a
+        storage port that is selected. The number of zones created will be
+        determined from the number of required initiator/storage-port
+        communication paths.
+      tags:
+        - compute
+      operationId: CreateExport
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/CreateExport'
+      responses:
+        202:
+          description: Task Object
+          schema:
+            $ref: '#/definitions/Tasks'
+        default:
+          description: Error Message
+          schema:
+            $ref: '#/definitions/Error'
+  /block/exports/{id}.json:
+    put:
+      summary: |
+        Update Export Group
+      description: |
+        Update an export group which includes:
+            Add/Remove block objects (volumes, mirrors and snapshots)
+            Add/remove clusters
+            Add/remove hosts
+            Add/remove initiators
+
+        Depending on the export group type (Initiator, Host or Cluster), the
+        request is restricted to enforce the same rules as
+        {@link #createExportGroup(ExportCreateParam)}:
+            For initiator type groups, only initiators are accepted in the
+            request. Further the initiators must be in the same host as the
+            existing initiators.
+
+            For host type groups, only hosts and initiators that belong to
+            existing hosts will be accepted.
+
+            For cluster type groups, only clusters, hosts and initiators will
+            be accepted. Hosts and initiators must belong to existing clusters
+            and hosts.
+
+        Note: The export group name, project and varray can not be modified.
+      tags:
+        - compute
+      operationId: UpdateExport
+      parameters:
+        - name: id
+          description: The URN of a ViPR/CoprHD ExportGroup
+          in: path
+          type: string
+          required: true
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/UpdateExport'
+      responses:
+        202:
+          description: Task Object
+          schema:
+            $ref: '#/definitions/Tasks'
+        default:
+          description: Error Message
+          schema:
+            $ref: '#/definitions/Error'
+  /block/exports/{id}/deactivate.json:
+    post:
+      summary: |
+        Delete Export Group
+      description: |
+        Deactivate block export. It will be deleted by the garbage collector on
+        a subsequent iteration
+
+        This removes visibility of shared storage in the block export to servers
+        through initiators in the block export.
+
+        If SAN Zones were created as a result of this Export Group (see Export
+        Group Create), they will be removed if they are not in use by other
+        Export Groups.
+      tags:
+        - compute
+      operationId: DeleteExport
+      parameters:
+        - name: id
+          description: The URN of a ViPR/CoprHD Export
+          in: path
+          type: string
+          required: true
+      responses:
+        202:
+          description: Task Object
+          schema:
+            $ref: '#/definitions/Task'
+        default:
+          description: Error Message
+          schema:
+            $ref: '#/definitions/Error'
+  /block/snapshots/bulk.json:
+    get:
+      summary: |
+        List Snapshots
+      description: |
+        Retrieve all ids of this type of resources.
+      tags:
+        - block
+      operationId: ListSnapshots
+      responses:
+        200:
+          description: Snapshots List
+          schema:
+            $ref: '#/definitions/Snapshots'
+        default:
+          description: Error Message
+          schema:
+            $ref: '#/definitions/Error'
+  /block/snapshots/{id}.json:
+    get:
+      summary: |
+        Show Snapshot
+      description: |
+        Show snapshot details.
+      tags:
+        - block
+      operationId: ShowSnapshot
+      parameters:
+        - name: id
+          description: The URN of a ViPR/CoprHD Snapshot
+          in: path
+          type: string
+          required: true
+      responses:
+        200:
+          description: Snapshots Details
+          schema:
+            $ref: '#/definitions/Snapshot'
+        default:
+          description: Error Message
+          schema:
+            $ref: '#/definitions/Error'
+  /block/snapshots/{id}/deactivate.json:
+    post:
+      summary: |
+        Deactivate Snapshot
+      description: |
+        Deactivate volume snapshot, this will move the snapshot to a
+        "marked-for-delete" state. It will be deleted by the garbage collector
+        on a subsequent iteration If this snapshot was created from a volume
+        that is part of a consistency group, then all the related snapshots
+        will be deactivated, as well.
+      tags:
+        - block
+      operationId: DeleteSnapshot
+      parameters:
+        - name: id
+          description: The URN of a ViPR/CoprHD Snapshot
+          in: path
+          type: string
+          required: true
+      responses:
+        202:
+          description: Task Object
+          schema:
+            $ref: '#/definitions/Task'
+        default:
+          description: Error Message
+          schema:
+            $ref: '#/definitions/Error'
+  /block/snapshots/{id}/protection/full-copies.json:
+    post:
+      summary: |
+        Create Full Copy
+      description: |
+        Create a full copy as a volume of the specified snapshot.
+      tags:
+        - block
+      operationId: CreateSnapshotFullCopy
+      parameters:
+        - name: id
+          description: The URN of a ViPR/CoprHD Task
+          in: path
+          type: string
+          required: true
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/CreateSnapshotFullCopy'
+      responses:
+        202:
+          description: Task Object
+          schema:
+            $ref: '#/definitions/Task'
+        default:
+          description: Error Message
+          schema:
+            $ref: '#/definitions/Error'
+  /vdc/tasks.json:
+    get:
+      summary: |
+        List Tasks
+      description: |
+        Returns a list of tasks for the specified tenant
+      tags:
+        - vdc
+      operationId: ListTasks
+      responses:
+        200:
+          description: Task List
+          schema:
+            $ref: '#/definitions/Tasks'
+        default:
+          description: Error Message
+          schema:
+            $ref: '#/definitions/Error'
+  /vdc/tasks/{id}.json:
+    get:
+      summary: |
+        Show Task
+      description: |
+        Show Task details.
+      tags:
+        - vdc
+      operationId: ShowTask
+      parameters:
+        - name: id
+          description: The URN of a ViPR/CoprHD Task
+          in: path
+          type: string
+          required: true
+      responses:
+        200:
+          description: Task Object
+          schema:
+            $ref: '#/definitions/Task'
+        default:
+          description: Error Message
+          schema:
+            $ref: '#/definitions/Error'
+  /block/volumes/search.json:
+    get:
+      summary: |
+        Search for "item" with "name"
+      description: |
+        Search resources by name, tag, project or additional parameters
+        (for example, wwn or initiator_port etc.)
+      tags:
+        - block
+      operationId: ListVolumeSearch
+      parameters:
+        - name: project
+          description: Project URN to match
+          in: query
+          type: string
+          required: false
+        - name: name
+          description: Name to match
+          in: query
+          type: string
+          required: false
+        - name: tag
+          description: Tag to match
+          in: query
+          type: string
+          required: false
+        - name: wwn
+          description: wwn to match
+          in: query
+          type: string
+          required: false
+      responses:
+        200:
+          description: Search Resources Object
+          schema:
+            $ref: '#/definitions/SearchResources'
+        default:
+          description: Error Message
+          schema:
+            $ref: '#/definitions/Error'
+definitions:
+  Resource:
+    type: object
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      link:
+        $ref: '#/definitions/Link'
+  SearchResources:
+    type: object
+    properties:
+      resource:
+        type: array
+        items:
+          allOf:
+            - $ref: '#/definitions/Resource'
+            - type: object
+              properties:
+                match:
+                  type: string
+  Link:
+    type: object
+    properties:
+      rel:
+        type: string
+      href:
+        type: string
+  Task:
+    type: object
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      link:
+        $ref: '#/definitions/Link'
+      inactive:
+        type: boolean
+      global:
+        type: boolean
+      remote:
+        type: boolean
+      internal:
+        type: boolean
+      progress:
+        type: integer
+      start_time:
+        type: integer
+        format: int64
+      creation_time:
+        type: integer
+        format: int64
+      vdc:
+        $ref: '#/definitions/Resource'
+      tenant:
+        $ref: '#/definitions/Resource'
+      resource:
+        $ref: '#/definitions/Resource'
+      associated_resources:
+        type: array
+        items:
+          type: string
+      tags:
+        type: array
+        items:
+          type: string
+      state:
+        type: string
+      op_id:
+        type: string
+      description:
+        type: string
+      message:
+        type: string
+  Tasks:
+    type: object
+    properties:
+      task:
+        type: array
+        items:
+          $ref: '#/definitions/Task'
+  CreateVolumeSnapshot:
+    type: object
+    properties:
+      name:
+        type: string
+      create_inactive:
+        type: boolean
+      type:
+        type: string
+        enum:
+          - RP
+          - SRDF
+          - NATIVE
+      read_only:
+        type: boolean
+  Volumes:
+    type: object
+    properties:
+      id:
+        type: array
+        items:
+          type: string
+  Volume:
+    allOf:
+      - $ref: '#/definitions/Resource'
+      - type: object
+        properties:
+          vdc:
+            $ref: '#/definitions/Resource'
+          tenant:
+            $ref: '#/definitions/Resource'
+          project:
+            $ref: '#/definitions/Resource'
+          varray:
+            $ref: '#/definitions/Resource'
+          storage_pool:
+            $ref: '#/definitions/Resource'
+          vpool:
+            $ref: '#/definitions/Resource'
+          # Config if protection is type Resource
+          protection:
+            $ref: '#/definitions/Resource'
+          inactive:
+            type: boolean
+          global:
+            type: boolean
+          remote:
+            type: boolean
+          internal:
+            type: boolean
+          supports_snapshot_sessions:
+            type: boolean
+          is_composite:
+            type: boolean
+          thinly_provisioned:
+            type: boolean
+          creation_time:
+            type: integer
+          storage_controller:
+            type: string
+          wwn:
+            type: string
+          device_label:
+            type: string
+          native_id:
+            type: string
+          replication_group_instance:
+            type: string
+          provisioned_capacity_gb:
+            type: string
+          allocated_capacity_gb:
+            type: string
+          requested_capacity_gb:
+            type: string
+          pre_allocation_size_gb:
+            type: string
+          access_state:
+            type: string
+          system_type:
+            type: string
+          protocols:
+            type: array
+            items:
+              type: string
+              enum:
+                - FC
+                # Confirm the iSCSI Word
+                - iSCSI
+                - ScaleIO
+          tags:
+            type: array
+            items:
+              type: string
+          high_availability_backing_volumes:
+            type: array
+            items:
+              type: string
+          volume_groups:
+            type: array
+            items:
+              type: string
+  VolumeExports:
+    type: object
+    properties:
+      itl:
+        type: array
+        items:
+          type: object
+          properties:
+            hlu:
+              type: integer
+            initiator:
+              allOf:
+                - $ref: '#/definitions/Resource'
+                - type: object
+              properties:
+                port:
+                  type: string
+            export:
+              $ref: '#/definitions/Resource'
+            device:
+              allOf:
+                - $ref: '#/definitions/Resource'
+                - type: object
+              properties:
+                wwn:
+                  type: string
+            target:
+              allOf:
+                - $ref: '#/definitions/Resource'
+                - type: object
+              properties:
+                port:
+                  type: string
+            san_zone_name:
+              type: string
+  VolumeSnapshots:
+    type: object
+    properties:
+      snapshot:
+        type: array
+        items:
+          $ref: '#/definitions/Resource'
+  Snapshots:
+    type: object
+    properties:
+      id:
+        type: array
+        items:
+          type: string
+  Snapshot:
+    allOf:
+      - $ref: '#/definitions/Volume'
+      - type: object
+    properties:
+      is_sync_active:
+        type: boolean
+      source_native_id:
+        type: string
+      snapset_label:
+        type: string
+      replica_state:
+        type: string
+  ExpandVolume:
+    type: object
+    properties:
+      new_size:
+        type: string
+  CreateVolume:
+    type: object
+    properties:
+      consistency_group:
+        type: string
+      count:
+        type: integer
+        format: int32
+      name:
+        type: string
+      project:
+        type: string
+      size:
+        type: string
+      varray:
+        type: string
+      vpool:
+        type: string
+  CreateVolumeFullCopy:
+    type: object
+    properties:
+      type:
+        type: string
+      name:
+        type: string
+      count:
+        type: integer
+      create_inactive:
+        type: boolean
+  CreateExport:
+    type: object
+    properties:
+      clusters:
+        type: array
+        items:
+          type: string
+      hosts:
+        type: array
+        items:
+          type: string
+      initiators:
+        type: array
+        items:
+          type: string
+      name:
+        type: string
+      project:
+        type: string
+      type:
+        type: string
+        enum:
+          - Initiator
+          - Host
+          - Cluster
+          - Exclusive
+      varray:
+        type: string
+      volumes:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: string
+            lun:
+              type: string
+  UpdateExport:
+    type: object
+    properties:
+      cluster_changes:
+        type: object
+        properties:
+          add:
+            type: array
+            items:
+              type: string
+          remove:
+            type: array
+            items:
+              type: string
+      host_changes:
+        type: object
+        properties:
+          add:
+            type: array
+            items:
+              type: string
+          remove:
+            type: array
+            items:
+              type: string
+      initiator_changes:
+        type: object
+        properties:
+          add:
+            type: array
+            items:
+              type: string
+          remove:
+            type: array
+            items:
+              type: string
+      volume_changes:
+        type: string
+  CreateSnapshotFullCopy:
+    type: object
+    properties:
+      type:
+        type: string
+      name:
+        type: string
+      count:
+        type: integer
+      create_inactive:
+        type: boolean
+  Error:
+    type: object
+    properties:
+      code:
+        type: integer
+        format: int32
+      description:
+        type: string
+      details:
+        type: string
+      retryable:
+        type: boolean
