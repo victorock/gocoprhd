@@ -8,6 +8,7 @@ import (
   "crypto/tls"
   "net/http"
 
+  "github.com/go-openapi/runtime"
 	httptransport "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
 
@@ -17,9 +18,7 @@ import (
   "github.com/victorock/gocoprhd/models"
 )
 
-// Test Get Volumes
-func TestListVolumes(t *testing.T) {
-
+func Init() (*apiclient.CoprHD, runtime.ClientAuthInfoWriter) {
   // create the transport
   transport := httptransport.New("localhost:4443", "/", []string{"https"})
   authInfo := httptransport.BasicAuth( "root", "password")
@@ -64,6 +63,32 @@ func TestListVolumes(t *testing.T) {
   authInfo = httptransport.APIKeyAuth("X-SDS-AUTH-TOKEN",
                                       "header",
                                       login.XSDSAUTHTOKEN)
+  return client, authInfo
+}
+
+// Test Get Volumes
+func TestInit(t *testing.T) {
+  client, authInfo := Init()
+
+  //use any function to do REST operations
+  resp, err := client.Block.ListVolumes(nil, authInfo)
+  if err != nil {
+      log.Fatal(err)
+  }
+  fmt.Printf("%#v\n", resp.Payload)
+
+  for _, v := range resp.Payload.ID {
+    fmt.Printf("#####################\n")
+    fmt.Printf("Volume ID: %#v\n", v)
+  }
+
+}
+
+// Test Get Volumes
+func TestListVolumes(t *testing.T) {
+
+  // Init
+  client, authInfo := Init()
 
   //use any function to do REST operations
   resp, err := client.Block.ListVolumes(nil, authInfo)
@@ -82,106 +107,30 @@ func TestListVolumes(t *testing.T) {
 // Test Get Snapshots
 func TestListSnapshots(t *testing.T) {
 
-  // create the transport
-  transport := httptransport.New("localhost:4443", "/", []string{"https"})
-  authInfo := httptransport.BasicAuth( "root", "password")
-
-  // Set Insecure SSL
-  transport.Transport = &http.Transport{
-				TLSClientConfig: &tls.Config{
-					InsecureSkipVerify: true,
-				},
-			}
-
-  // If not using the Vagrant image, set this environment variable to something other than localhost:4443
-  if os.Getenv("GOCOPRHD_ENDPOINT") != "" {
-      transport.Host = os.Getenv("GOCOPRHD_ENDPOINT")
-  }
-
-  // Get the token to populate header for requests
-  if os.Getenv("GOCOPRHD_TOKEN") != "" {
-      authInfo = httptransport.APIKeyAuth("X-SDS-AUTH-TOKEN",
-                                          "header",
-                                          os.Getenv("GOCOPRHD_TOKEN"))
-  }
-
-  // Basic Authentication to get the user Token
-  if os.Getenv("GOCOPRHD_USERNAME") != "" {
-    if os.Getenv("GOCOPRHD_PASSWORD") != "" {
-      authInfo = httptransport.BasicAuth(os.Getenv("GOCOPRHD_USERNAME"),
-                                          os.Getenv("GOCOPRHD_PASSWORD"))
-    }
-  }
-
-  // create the API client, with the transport
-  client := apiclient.New(transport, strfmt.Default)
-
-  // Login to get our Token
-  login, err := client.Authentication.Login(nil, authInfo)
-  if err != nil {
-      log.Fatal(err)
-  }
-
-  // Populate the Header with token from now on
-  authInfo = httptransport.APIKeyAuth("X-SDS-AUTH-TOKEN",
-                                      "header",
-                                      login.XSDSAUTHTOKEN)
+  // Init
+  client, authInfo := Init()
 
 	//use any function to do REST operations
 	resp, err := client.Block.ListSnapshots(nil, authInfo)
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("%#v\n", resp.Payload)
+
+  fmt.Printf("%#v\n", resp.Payload)
+
+  for _, v := range resp.Payload.ID {
+    fmt.Printf("#####################\n")
+    fmt.Printf("Snapshot ID: %#v\n", v)
+  }
+
 }
 
 // Test Get Snapshots
 func TestCreateVolume(t *testing.T) {
 
-  // create the transport
-  transport := httptransport.New("localhost:4443", "/", []string{"https"})
-  authInfo := httptransport.BasicAuth( "root", "password")
+  // Init
+  client, authInfo := Init()
 
-  // Set Insecure SSL
-  transport.Transport = &http.Transport{
-				TLSClientConfig: &tls.Config{
-					InsecureSkipVerify: true,
-				},
-			}
-
-  // If not using the Vagrant image, set this environment variable to something other than localhost:4443
-  if os.Getenv("GOCOPRHD_ENDPOINT") != "" {
-      transport.Host = os.Getenv("GOCOPRHD_ENDPOINT")
-  }
-
-  // Get the token to populate header for requests
-  if os.Getenv("GOCOPRHD_TOKEN") != "" {
-      authInfo = httptransport.APIKeyAuth("X-SDS-AUTH-TOKEN",
-                                          "header",
-                                          os.Getenv("GOCOPRHD_TOKEN"))
-  }
-
-  // Basic Authentication to get the user Token
-  if os.Getenv("GOCOPRHD_USERNAME") != "" {
-    if os.Getenv("GOCOPRHD_PASSWORD") != "" {
-      authInfo = httptransport.BasicAuth(os.Getenv("GOCOPRHD_USERNAME"),
-                                          os.Getenv("GOCOPRHD_PASSWORD"))
-    }
-  }
-
-  // create the API client, with the transport
-  client := apiclient.New(transport, strfmt.Default)
-
-  // Login to get our Token
-  login, err := client.Authentication.Login(nil, authInfo)
-  if err != nil {
-      log.Fatal(err)
-  }
-
-  // Populate the Header with token from now on
-  authInfo = httptransport.APIKeyAuth("X-SDS-AUTH-TOKEN",
-                                      "header",
-                                      login.XSDSAUTHTOKEN)
   // Construct Request Parameters
   b := &models.CreateVolume {
           ConsistencyGroup: "",
@@ -208,49 +157,8 @@ func TestCreateVolume(t *testing.T) {
 // Test Get Tasks
 func TestListTasks(t *testing.T) {
 
-  // create the transport
-  transport := httptransport.New("localhost:4443", "/", []string{"https"})
-  authInfo := httptransport.BasicAuth( "root", "password")
-  transport.Transport = &http.Transport{
-				TLSClientConfig: &tls.Config{
-					InsecureSkipVerify: true,
-				},
-			}
-
-
-  // If not using the Vagrant image, set this environment variable to something other than localhost:4443
-  if os.Getenv("GOCOPRHD_ENDPOINT") != "" {
-      transport.Host = os.Getenv("GOCOPRHD_ENDPOINT")
-  }
-
-  // Get the token to populate header for requests
-  if os.Getenv("GOCOPRHD_TOKEN") != "" {
-      authInfo = httptransport.APIKeyAuth("X-SDS-AUTH-TOKEN",
-                                          "header",
-                                          os.Getenv("GOCOPRHD_TOKEN"))
-  }
-
-  // Basic Authentication to get the user Token
-  if os.Getenv("GOCOPRHD_USERNAME") != "" {
-    if os.Getenv("GOCOPRHD_PASSWORD") != "" {
-      authInfo = httptransport.BasicAuth(os.Getenv("GOCOPRHD_USERNAME"),
-                                          os.Getenv("GOCOPRHD_PASSWORD"))
-    }
-  }
-
-  // create the API client, with the transport
-  client := apiclient.New(transport, strfmt.Default)
-
-  // Login to get our Token
-  login, err := client.Authentication.Login(nil, authInfo)
-  if err != nil {
-      log.Fatal(err)
-  }
-
-  // Populate the Header with token from now on
-  authInfo = httptransport.APIKeyAuth("X-SDS-AUTH-TOKEN",
-                                      "header",
-                                      login.XSDSAUTHTOKEN)
+  // Init
+  client, authInfo := Init()
 
 	//use any function to do REST operations
 	resp, err := client.Vdc.ListTasks(nil, authInfo)
@@ -268,50 +176,8 @@ func TestListTasks(t *testing.T) {
 // Test Get Tasks
 func TestShowTask(t *testing.T) {
 
-  // create the transport
-  transport := httptransport.New("localhost:4443", "/", []string{"https"})
-  authInfo := httptransport.BasicAuth( "root", "password")
-
-  // Set Insecure SSL
-  transport.Transport = &http.Transport{
-				TLSClientConfig: &tls.Config{
-					InsecureSkipVerify: true,
-				},
-			}
-
-  // If not using the Vagrant image, set this environment variable to something other than localhost:4443
-  if os.Getenv("GOCOPRHD_ENDPOINT") != "" {
-      transport.Host = os.Getenv("GOCOPRHD_ENDPOINT")
-  }
-
-  // Get the token to populate header for requests
-  if os.Getenv("GOCOPRHD_TOKEN") != "" {
-      authInfo = httptransport.APIKeyAuth("X-SDS-AUTH-TOKEN",
-                                          "header",
-                                          os.Getenv("GOCOPRHD_TOKEN"))
-  }
-
-  // Basic Authentication to get the user Token
-  if os.Getenv("GOCOPRHD_USERNAME") != "" {
-    if os.Getenv("GOCOPRHD_PASSWORD") != "" {
-      authInfo = httptransport.BasicAuth(os.Getenv("GOCOPRHD_USERNAME"),
-                                          os.Getenv("GOCOPRHD_PASSWORD"))
-    }
-  }
-
-  // create the API client, with the transport
-  client := apiclient.New(transport, strfmt.Default)
-
-  // Login to get our Token
-  login, err := client.Authentication.Login(nil, authInfo)
-  if err != nil {
-      log.Fatal(err)
-  }
-
-  // Populate the Header with token from now on
-  authInfo = httptransport.APIKeyAuth("X-SDS-AUTH-TOKEN",
-                                      "header",
-                                      login.XSDSAUTHTOKEN)
+  // Init
+  client, authInfo := Init()
 
   // Create Object to Request
   showTaskParams := vdc.NewShowTaskParams().
@@ -328,50 +194,8 @@ func TestShowTask(t *testing.T) {
 // Test Get Tasks
 func TestListVolumeExports(t *testing.T) {
 
-  // create the transport
-  transport := httptransport.New("localhost:4443", "/", []string{"https"})
-  authInfo := httptransport.BasicAuth( "root", "password")
-
-  // Set Insecure SSL
-  transport.Transport = &http.Transport{
-				TLSClientConfig: &tls.Config{
-					InsecureSkipVerify: true,
-				},
-			}
-
-  // If not using the Vagrant image, set this environment variable to something other than localhost:4443
-  if os.Getenv("GOCOPRHD_ENDPOINT") != "" {
-      transport.Host = os.Getenv("GOCOPRHD_ENDPOINT")
-  }
-
-  // Get the token to populate header for requests
-  if os.Getenv("GOCOPRHD_TOKEN") != "" {
-      authInfo = httptransport.APIKeyAuth("X-SDS-AUTH-TOKEN",
-                                          "header",
-                                          os.Getenv("GOCOPRHD_TOKEN"))
-  }
-
-  // Basic Authentication to get the user Token
-  if os.Getenv("GOCOPRHD_USERNAME") != "" {
-    if os.Getenv("GOCOPRHD_PASSWORD") != "" {
-      authInfo = httptransport.BasicAuth(os.Getenv("GOCOPRHD_USERNAME"),
-                                          os.Getenv("GOCOPRHD_PASSWORD"))
-    }
-  }
-
-  // create the API client, with the transport
-  client := apiclient.New(transport, strfmt.Default)
-
-  // Login to get our Token
-  login, err := client.Authentication.Login(nil, authInfo)
-  if err != nil {
-      log.Fatal(err)
-  }
-
-  // Populate the Header with token from now on
-  authInfo = httptransport.APIKeyAuth("X-SDS-AUTH-TOKEN",
-                                      "header",
-                                      login.XSDSAUTHTOKEN)
+  // Init
+  client, authInfo := Init()
 
   // Create Object to Request
   listVolumeExportsParams := block.NewListVolumeExportsParams().
@@ -392,4 +216,64 @@ func TestListVolumeExports(t *testing.T) {
     fmt.Printf("Device ID: %#v\n", exp.Device.ID)
     fmt.Printf("Target ID: %#v\n", exp.Target.ID)
   }
+}
+
+func TestCreateVolumeSnapshot(t *testing.T) {
+
+  // Init
+  client, authInfo := Init()
+
+  // Construct Request Parameters
+  b := &models.CreateVolumeSnapshot {
+          Name: "coprhd_snap_vol01",
+          CreateInactive: true,
+          ReadOnly: false,
+          Type: "rp",
+        }
+
+  // Create Object to Request
+  createVolumeSnapshotParams := block.NewCreateVolumeSnapshotParams().
+                                      WithID("urn:storageos:Volume:9435e860-e729-478f-8a1b-350da9ce6dd9:vdc1").
+                                      WithBody(b)
+
+	//use any function to do REST operations
+	resp, err := client.Block.CreateVolumeSnapshot(createVolumeSnapshotParams, authInfo)
+	if err != nil {
+		log.Fatal(err)
+	}
+  fmt.Printf("%#v\n", resp.Payload)
+}
+
+func TestListVolumeSnapshots(t *testing.T) {
+
+  // Init
+  client, authInfo := Init()
+
+  // Create Object to Request
+  listVolumeSnapshotsParams := block.NewListVolumeSnapshotsParams().
+                                      WithID("urn:storageos:Volume:9435e860-e729-478f-8a1b-350da9ce6dd9:vdc1")
+
+	//use any function to do REST operations
+	resp, err := client.Block.ListVolumeSnapshots(listVolumeSnapshotsParams, authInfo)
+	if err != nil {
+		log.Fatal(err)
+	}
+  fmt.Printf("%#v\n", resp.Payload)
+}
+
+func TestDeleteSnapshot(t *testing.T) {
+
+  // Init
+  client, authInfo := Init()
+
+  // Create Object to Request
+  deleteSnapshotParams := block.NewDeleteSnapshotParams().
+                                      WithID("urn:storageos:Volume:9435e860-e729-478f-8a1b-350da9ce6dd9:vdc1")
+
+	//use any function to do REST operations
+	resp, err := client.Block.DeleteSnapshot(deleteSnapshotParams, authInfo)
+	if err != nil {
+		log.Fatal(err)
+	}
+  fmt.Printf("%#v\n", resp.Payload)
 }

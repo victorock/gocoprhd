@@ -4,9 +4,13 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
+
 	strfmt "github.com/go-openapi/strfmt"
+	"github.com/go-openapi/swag"
 
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/validate"
 )
 
 /*CreateVolumeSnapshot create volume snapshot
@@ -17,7 +21,7 @@ type CreateVolumeSnapshot struct {
 
 	/* create inactive
 	 */
-	CreateInactive string `json:"create_inactive,omitempty"`
+	CreateInactive bool `json:"create_inactive,omitempty"`
 
 	/* name
 	 */
@@ -25,7 +29,7 @@ type CreateVolumeSnapshot struct {
 
 	/* read only
 	 */
-	ReadOnly string `json:"read_only,omitempty"`
+	ReadOnly bool `json:"read_only,omitempty"`
 
 	/* type
 	 */
@@ -36,8 +40,46 @@ type CreateVolumeSnapshot struct {
 func (m *CreateVolumeSnapshot) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateType(formats); err != nil {
+		// prop
+		res = append(res, err)
+	}
+
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+var createVolumeSnapshotTypeTypePropEnum []interface{}
+
+// prop value enum
+func (m *CreateVolumeSnapshot) validateTypeEnum(path, location string, value string) error {
+	if createVolumeSnapshotTypeTypePropEnum == nil {
+		var res []string
+		if err := json.Unmarshal([]byte(`["RP","SRDF","NATIVE"]`), &res); err != nil {
+			return err
+		}
+		for _, v := range res {
+			createVolumeSnapshotTypeTypePropEnum = append(createVolumeSnapshotTypeTypePropEnum, v)
+		}
+	}
+	if err := validate.Enum(path, location, value, createVolumeSnapshotTypeTypePropEnum); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *CreateVolumeSnapshot) validateType(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Type) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := m.validateTypeEnum("type", "body", m.Type); err != nil {
+		return err
+	}
+
 	return nil
 }

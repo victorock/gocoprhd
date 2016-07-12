@@ -25,6 +25,7 @@ The following REST and methods implementations are part of this release:
 /block/volumes/{id}/protection/snapshots.json:
 
     operationId: CreateVolumeSnapshot
+    operationId: ListVolumeSnapshots
 
 /block/volumes/bulk.json:
 

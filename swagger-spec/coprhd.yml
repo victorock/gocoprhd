@@ -116,6 +116,29 @@ paths:
           description: Error Message
           schema:
             $ref: '#/definitions/Error'
+    get:
+      summary: |
+        List Volume Snapshot
+      description: |
+        List volume snapshots
+      tags:
+        - block
+      operationId: ListVolumeSnapshots
+      parameters:
+        - name: id
+          description: The URN of a ViPR/CoprHD Volume
+          in: path
+          type: string
+          required: true
+      responses:
+        200:
+          description: List Volume Snapshot
+          schema:
+            $ref: '#/definitions/VolumeSnapshots'
+        default:
+          description: Error Message
+          schema:
+            $ref: '#/definitions/Error'
   /block/volumes/bulk.json:
     get:
       summary: |
@@ -627,10 +650,6 @@ definitions:
           $ref: '#/definitions/Resource'
         tenant:
           $ref: '#/definitions/Resource'
-        #      resource:
-        #        $ref: '#/definitions/Resource'
-        #      link:
-        #        $ref: '#/definitions/Link'
         associated_resources:
           type: array
           items:
@@ -660,11 +679,15 @@ definitions:
       name:
         type: string
       create_inactive:
-        type: string
+        type: boolean
       type:
         type: string
+        enum:
+          - RP
+          - SRDF
+          - NATIVE
       read_only:
-        type: string
+        type: boolean
   Volumes:
     type: object
     properties:
@@ -723,6 +746,13 @@ definitions:
                   type: string
             san_zone_name:
               type: string
+  VolumeSnapshots:
+    type: object
+    properties:
+      snapshot:
+        type: array
+        items:
+          $ref: '#/definitions/Resource'
   Snapshots:
     type: object
     properties:

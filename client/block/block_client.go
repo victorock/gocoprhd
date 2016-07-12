@@ -440,6 +440,35 @@ func (a *Client) ListVolumeSearch(params *ListVolumeSearchParams, authInfo runti
 }
 
 /*
+ListVolumeSnapshots lists volume snapshot
+
+List volume snapshots
+
+*/
+func (a *Client) ListVolumeSnapshots(params *ListVolumeSnapshotsParams, authInfo runtime.ClientAuthInfoWriter) (*ListVolumeSnapshotsOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewListVolumeSnapshotsParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "ListVolumeSnapshots",
+		Method:             "GET",
+		PathPattern:        "/block/volumes/{id}/protection/snapshots.json",
+		ProducesMediaTypes: []string{"application/json", "application/x-gzip"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http", "https"},
+		Params:             params,
+		Reader:             &ListVolumeSnapshotsReader{formats: a.formats},
+		AuthInfo:           authInfo,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*ListVolumeSnapshotsOK), nil
+}
+
+/*
 ListVolumes lists volumes
 
 Retrieve all ids of this type of resources.
