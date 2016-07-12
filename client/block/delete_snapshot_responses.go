@@ -49,7 +49,7 @@ func NewDeleteSnapshotAccepted() *DeleteSnapshotAccepted {
 Task Object
 */
 type DeleteSnapshotAccepted struct {
-	Payload *models.Tasks
+	Payload *models.Task
 }
 
 func (o *DeleteSnapshotAccepted) Error() string {
@@ -58,7 +58,7 @@ func (o *DeleteSnapshotAccepted) Error() string {
 
 func (o *DeleteSnapshotAccepted) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	o.Payload = new(models.Tasks)
+	o.Payload = new(models.Task)
 
 	// response payload
 	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {

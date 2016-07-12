@@ -2,7 +2,7 @@ swagger: '2.0'
 info:
   title: CoprHD API
   description: CoprHD core API
-  version: "2.4.0"
+  version: "3.0.0"
 schemes:
   - http
   - https
@@ -111,7 +111,7 @@ paths:
         202:
           description: Task Object
           schema:
-            $ref: '#/definitions/Task'
+            $ref: '#/definitions/Tasks'
         default:
           description: Error Message
           schema:
@@ -181,6 +181,35 @@ paths:
           description: Error Message
           schema:
             $ref: '#/definitions/Error'
+  /block/volumes/{id}/protection/full-copies.json:
+    post:
+      summary: |
+        Create Full Copy
+      description: |
+        Create a full copy of the specified volume.
+      tags:
+        - block
+      operationId: CreateVolumeFullCopy
+      parameters:
+        - name: id
+          description: The URN of a ViPR/CoprHD Task
+          in: path
+          type: string
+          required: true
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/CreateVolumeFullCopy'
+      responses:
+        202:
+          description: Task Object
+          schema:
+            $ref: '#/definitions/Tasks'
+        default:
+          description: Error Message
+          schema:
+            $ref: '#/definitions/Error'
   /block/volumes/{id}/exports.json:
     get:
       summary: |
@@ -232,7 +261,7 @@ paths:
         202:
           description: Task Object
           schema:
-            $ref: '#/definitions/Tasks'
+            $ref: '#/definitions/Task'
         default:
           description: Error Message
           schema:
@@ -335,7 +364,7 @@ paths:
         determined from the number of required initiator/storage-port
         communication paths.
       tags:
-        - block
+        - compute
       operationId: CreateExport
       parameters:
         - name: body
@@ -379,7 +408,7 @@ paths:
 
         Note: The export group name, project and varray can not be modified.
       tags:
-        - block
+        - compute
       operationId: UpdateExport
       parameters:
         - name: id
@@ -416,7 +445,7 @@ paths:
         Group Create), they will be removed if they are not in use by other
         Export Groups.
       tags:
-        - block
+        - compute
       operationId: DeleteExport
       parameters:
         - name: id
@@ -428,7 +457,7 @@ paths:
         202:
           description: Task Object
           schema:
-            $ref: '#/definitions/Tasks'
+            $ref: '#/definitions/Task'
         default:
           description: Error Message
           schema:
@@ -475,8 +504,6 @@ paths:
           description: Error Message
           schema:
             $ref: '#/definitions/Error'
-# TODO
-#operationId: SnapshotCopy
   /block/snapshots/{id}/deactivate.json:
     post:
       summary: |
@@ -500,13 +527,11 @@ paths:
         202:
           description: Task Object
           schema:
-            $ref: '#/definitions/Tasks'
+            $ref: '#/definitions/Task'
         default:
           description: Error Message
           schema:
             $ref: '#/definitions/Error'
-# TODO:
-# operationId: VolumeCopy
   /block/snapshots/{id}/protection/full-copies.json:
     post:
       summary: |
@@ -531,7 +556,7 @@ paths:
         202:
           description: Task Object
           schema:
-            $ref: '#/definitions/Tasks'
+            $ref: '#/definitions/Task'
         default:
           description: Error Message
           schema:
@@ -578,7 +603,7 @@ paths:
           description: Error Message
           schema:
             $ref: '#/definitions/Error'
-  /block/volumes/search.json?{item}={name}:
+  /block/volumes/search.json:
     get:
       summary: |
         Search for "item" with "name"
@@ -589,21 +614,31 @@ paths:
         - block
       operationId: ListVolumeSearch
       parameters:
-        - name: item
-          description: Item to search
-          in: path
+        - name: project
+          description: Project URN to match
+          in: query
           type: string
-          required: true
+          required: false
         - name: name
-          description: String to match
-          in: path
+          description: Name to match
+          in: query
           type: string
-          required: true
+          required: false
+        - name: tag
+          description: Tag to match
+          in: query
+          type: string
+          required: false
+        - name: wwn
+          description: wwn to match
+          in: query
+          type: string
+          required: false
       responses:
         200:
-          description: Generic Object
+          description: Search Resources Object
           schema:
-            type: object
+            $ref: '#/definitions/SearchResources'
         default:
           description: Error Message
           schema:
@@ -618,6 +653,18 @@ definitions:
         type: string
       link:
         $ref: '#/definitions/Link'
+  SearchResources:
+    type: object
+    properties:
+      resource:
+        type: array
+        items:
+          allOf:
+            - $ref: '#/definitions/Resource'
+            - type: object
+              properties:
+                match:
+                  type: string
   Link:
     type: object
     properties:
@@ -626,46 +673,52 @@ definitions:
       href:
         type: string
   Task:
-    allOf:
-    - $ref: '#/definitions/Resource'
-    - type: object
-      properties:
-        inactive:
-          type: boolean
-        global:
-          type: boolean
-        remote:
-          type: boolean
-        internal:
-          type: boolean
-        progress:
-          type: integer
-        start_time:
-          type: integer
-          format: int64
-        creation_time:
-          type: integer
-          format: int64
-        vdc:
-          $ref: '#/definitions/Resource'
-        tenant:
-          $ref: '#/definitions/Resource'
-        associated_resources:
-          type: array
-          items:
-            type: string
-        tags:
-          type: array
-          items:
-            type: string
-        state:
+    type: object
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      link:
+        $ref: '#/definitions/Link'
+      inactive:
+        type: boolean
+      global:
+        type: boolean
+      remote:
+        type: boolean
+      internal:
+        type: boolean
+      progress:
+        type: integer
+      start_time:
+        type: integer
+        format: int64
+      creation_time:
+        type: integer
+        format: int64
+      vdc:
+        $ref: '#/definitions/Resource'
+      tenant:
+        $ref: '#/definitions/Resource'
+      resource:
+        $ref: '#/definitions/Resource'
+      associated_resources:
+        type: array
+        items:
           type: string
-        op_id:
+      tags:
+        type: array
+        items:
           type: string
-        description:
-          type: string
-        message:
-          type: string
+      state:
+        type: string
+      op_id:
+        type: string
+      description:
+        type: string
+      message:
+        type: string
   Tasks:
     type: object
     properties:
@@ -854,12 +907,22 @@ definitions:
       project:
         type: string
       size:
-        type: integer
-        format: int32
+        type: string
       varray:
         type: string
       vpool:
         type: string
+  CreateVolumeFullCopy:
+    type: object
+    properties:
+      type:
+        type: string
+      name:
+        type: string
+      count:
+        type: integer
+      create_inactive:
+        type: boolean
   CreateExport:
     type: object
     properties:
@@ -881,6 +944,11 @@ definitions:
         type: string
       type:
         type: string
+        enum:
+          - Initiator
+          - Host
+          - Cluster
+          - Exclusive
       varray:
         type: string
       volumes:
@@ -940,14 +1008,16 @@ definitions:
       count:
         type: integer
       create_inactive:
-        type: string
+        type: boolean
   Error:
     type: object
     properties:
       code:
         type: integer
         format: int32
-      message:
+      description:
         type: string
-      fields:
+      details:
         type: string
+      retryable:
+        type: boolean

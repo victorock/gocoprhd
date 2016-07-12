@@ -9,11 +9,11 @@ import (
 	"github.com/go-openapi/errors"
 )
 
-/*CreateSnapshotFullCopy create snapshot full copy
+/*CreateVolumeFullCopy create volume full copy
 
-swagger:model CreateSnapshotFullCopy
+swagger:model CreateVolumeFullCopy
 */
-type CreateSnapshotFullCopy struct {
+type CreateVolumeFullCopy struct {
 
 	/* count
 	 */
@@ -32,8 +32,8 @@ type CreateSnapshotFullCopy struct {
 	Type string `json:"type,omitempty"`
 }
 
-// Validate validates this create snapshot full copy
-func (m *CreateSnapshotFullCopy) Validate(formats strfmt.Registry) error {
+// Validate validates this create volume full copy
+func (m *CreateVolumeFullCopy) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if len(res) > 0 {

@@ -11,6 +11,7 @@ import (
 
 	"github.com/victorock/gocoprhd/client/authentication"
 	"github.com/victorock/gocoprhd/client/block"
+	"github.com/victorock/gocoprhd/client/compute"
 	"github.com/victorock/gocoprhd/client/vdc"
 )
 
@@ -22,7 +23,7 @@ func NewHTTPClient(formats strfmt.Registry) *CoprHD {
 	if formats == nil {
 		formats = strfmt.Default
 	}
-	transport := httptransport.New("localhost", "/", []string{"http", "https"})
+	transport := httptransport.New("localhost", "/", []string{"https", "http"})
 	return New(transport, formats)
 }
 
@@ -35,6 +36,8 @@ func New(transport runtime.ClientTransport, formats strfmt.Registry) *CoprHD {
 
 	cli.Block = block.New(transport, formats)
 
+	cli.Compute = compute.New(transport, formats)
+
 	cli.Vdc = vdc.New(transport, formats)
 
 	return cli
@@ -45,6 +48,8 @@ type CoprHD struct {
 	Authentication *authentication.Client
 
 	Block *block.Client
+
+	Compute *compute.Client
 
 	Vdc *vdc.Client
 
@@ -58,6 +63,8 @@ func (c *CoprHD) SetTransport(transport runtime.ClientTransport) {
 	c.Authentication.SetTransport(transport)
 
 	c.Block.SetTransport(transport)
+
+	c.Compute.SetTransport(transport)
 
 	c.Vdc.SetTransport(transport)
 

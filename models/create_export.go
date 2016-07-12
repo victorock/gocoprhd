@@ -4,10 +4,13 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
+
 	strfmt "github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/validate"
 )
 
 /*CreateExport create export
@@ -68,6 +71,11 @@ func (m *CreateExport) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateType(formats); err != nil {
+		// prop
+		res = append(res, err)
+	}
+
 	if err := m.validateVolumes(formats); err != nil {
 		// prop
 		res = append(res, err)
@@ -101,6 +109,39 @@ func (m *CreateExport) validateInitiators(formats strfmt.Registry) error {
 
 	if swag.IsZero(m.Initiators) { // not required
 		return nil
+	}
+
+	return nil
+}
+
+var createExportTypeTypePropEnum []interface{}
+
+// prop value enum
+func (m *CreateExport) validateTypeEnum(path, location string, value string) error {
+	if createExportTypeTypePropEnum == nil {
+		var res []string
+		if err := json.Unmarshal([]byte(`["Initiator","Host","Cluster","Exclusive"]`), &res); err != nil {
+			return err
+		}
+		for _, v := range res {
+			createExportTypeTypePropEnum = append(createExportTypeTypePropEnum, v)
+		}
+	}
+	if err := validate.Enum(path, location, value, createExportTypeTypePropEnum); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *CreateExport) validateType(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Type) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := m.validateTypeEnum("type", "body", m.Type); err != nil {
+		return err
 	}
 
 	return nil

@@ -14,6 +14,7 @@ import (
 
 	apiclient "github.com/victorock/gocoprhd/client"
   "github.com/victorock/gocoprhd/client/block"
+  "github.com/victorock/gocoprhd/client/compute"
   "github.com/victorock/gocoprhd/client/vdc"
   "github.com/victorock/gocoprhd/models"
 )
@@ -67,20 +68,18 @@ func Init() (*apiclient.CoprHD, runtime.ClientAuthInfoWriter) {
 }
 
 // Test Get Volumes
-func TestInit(t *testing.T) {
+func TestLogin(t *testing.T) {
   client, authInfo := Init()
 
   //use any function to do REST operations
-  resp, err := client.Block.ListVolumes(nil, authInfo)
+  resp, err := client.Authentication.Login(nil, authInfo)
   if err != nil {
       log.Fatal(err)
   }
-  fmt.Printf("%#v\n", resp.Payload)
+  fmt.Printf("%#v\n", resp)
 
   fmt.Printf("######################\n")
-  for _, v := range resp.Payload.ID {
-    fmt.Printf("Volume ID: %#v\n", v)
-  }
+  fmt.Printf("Login Token ID: %#v\n", resp.XSDSAUTHTOKEN)
   fmt.Printf("######################\n")
 }
 
@@ -134,9 +133,9 @@ func TestCreateVolume(t *testing.T) {
   b := &models.CreateVolume {
           ConsistencyGroup: "",
           Count: 1,
-          Name: "gocoprhd_test_vol01",
+          Name: "gocoprhd_test_vol02",
           Project: "urn:storageos:Project:7d46540b-140c-4f39-91b8-52d276356cf0:global",
-          Size: 10,
+          Size: "10GB",
           Varray: "urn:storageos:VirtualArray:ad18dd81-99c6-415d-9081-6091db3df599:vdc1",
           Vpool: "urn:storageos:VirtualPool:7e036b4a-9cba-4357-9afc-3aa7539f10c0:vdc1",
         }
@@ -181,7 +180,7 @@ func TestShowTask(t *testing.T) {
 
   // Create Object to Request
   showTaskParams := vdc.NewShowTaskParams().
-                    WithID("urn:storageos:Task:16030dd1-81b6-47ff-9243-a78032134691:vdc1")
+                    WithID("urn:storageos:Task:e3bdf184-777f-4222-95c2-fea74a6a1fb6:vdc1")
 
 	//use any function to do REST operations
 	resp, err := client.Vdc.ShowTask(showTaskParams, authInfo)
@@ -226,15 +225,14 @@ func TestCreateVolumeSnapshot(t *testing.T) {
 
   // Construct Request Parameters
   b := &models.CreateVolumeSnapshot {
-          Name: "coprhd_snap_vol01",
+          Name: "coprhd_snap_vol001",
           CreateInactive: true,
           ReadOnly: false,
-          Type: "rp",
         }
 
   // Create Object to Request
   createVolumeSnapshotParams := block.NewCreateVolumeSnapshotParams().
-                                      WithID("urn:storageos:Volume:9435e860-e729-478f-8a1b-350da9ce6dd9:vdc1").
+                                      WithID("urn:storageos:Volume:56ab82b3-c124-4e26-a8a4-edfa055dc8a5:vdc1").
                                       WithBody(b)
 
 	//use any function to do REST operations
@@ -325,21 +323,167 @@ func TestCreateExport(t *testing.T) {
 
   // Construct Request Parameters
   b := &models.CreateExport {
-          Name: "coprhd_snap_vol01",
-          CreateInactive: true,
-          ReadOnly: false,
-          Type: "rp",
-        }
+      Project: "urn:storageos:Project:7d46540b-140c-4f39-91b8-52d276356cf0:global",
+      Varray: "urn:storageos:VirtualArray:ad18dd81-99c6-415d-9081-6091db3df599:vdc1",
+      Name: "GoCoprHDExport01",
+      Type: "Host",
+      Hosts: []string{ "urn:storageos:Host:cd983935-e486-4e68-936d-4b88f08e65c8:vdc1" },
+      Volumes: []*models.CreateExportVolumesItems0{
+        &models.CreateExportVolumesItems0{
+          ID: "urn:storageos:Volume:9435e860-e729-478f-8a1b-350da9ce6dd9:vdc1",
+        },
+    },
+  }
 
   // Create Object to Request
-  createVolumeSnapshotParams := block.NewCreateVolumeSnapshotParams().
-                                      WithID("urn:storageos:Volume:9435e860-e729-478f-8a1b-350da9ce6dd9:vdc1").
-                                      WithBody(b)
+  createExportParams := compute.NewCreateExportParams().
+                        WithBody(b)
 
 	//use any function to do REST operations
-	resp, err := client.Block.CreateVolumeSnapshot(createVolumeSnapshotParams, authInfo)
+	resp, err := client.Compute.CreateExport(createExportParams, authInfo)
 	if err != nil {
 		log.Fatal(err)
 	}
   fmt.Printf("%#v\n", resp.Payload)
+}
+
+func TestDeleteExport(t *testing.T) {
+
+  // Init
+  client, authInfo := Init()
+
+  // Create Object to Request
+  deleteExportParams := compute.NewDeleteExportParams().
+                        WithID("urn:storageos:ExportGroup:73e5cedd-093e-43e2-a7a3-1ddba22fb579:vdc1")
+
+	//use any function to do REST operations
+	resp, err := client.Compute.DeleteExport(deleteExportParams, authInfo)
+	if err != nil {
+		log.Fatal(err)
+	}
+  fmt.Printf("%#v\n", resp.Payload)
+}
+
+func TestDeleteVolume(t *testing.T) {
+
+  // Init
+  client, authInfo := Init()
+
+  // Create Object to Request
+  deleteVolumeParams := block.NewDeleteVolumeParams().
+                        WithID("urn:storageos:Volume:3771efef-19a9-446f-8d8b-1e024ba484f3:vdc1")
+
+	//use any function to do REST operations
+	resp, err := client.Block.DeleteVolume(deleteVolumeParams, authInfo)
+	if err != nil {
+		log.Fatal(err)
+	}
+  fmt.Printf("%#v\n", resp.Payload)
+}
+
+func TestCreateSnapshotFullCopy(t *testing.T) {
+
+  // Init
+  client, authInfo := Init()
+
+  // Construct Request Parameters
+  b := &models.CreateSnapshotFullCopy {
+      Count: 1,
+      Name: "gocoprhd_snapfullcopy",
+      CreateInactive: false,
+      Type: "rp",
+    }
+
+
+  // Create Object to Request
+  createSnapshotFullCopyParams := block.NewCreateSnapshotFullCopyParams().
+                        WithID("urn:storageos:BlockSnapshot:c4173529-abb4-4ddd-8a0d-edcbd659e97f:vdc1").
+                        WithBody(b)
+
+
+	//use any function to do REST operations
+	resp, err := client.Block.CreateSnapshotFullCopy(createSnapshotFullCopyParams, authInfo)
+	if err != nil {
+		log.Fatal(err)
+	}
+  fmt.Printf("%#v\n", resp.Payload)
+}
+
+func TestCreateVolumeFullCopy(t *testing.T) {
+
+  // Init
+  client, authInfo := Init()
+
+  // Construct Request Parameters
+  b := &models.CreateVolumeFullCopy {
+      Count: 1,
+      Name: "gocoprhd_vol_fullcopy_01",
+      CreateInactive: false,
+      Type: "",
+    }
+
+
+  // Create Object to Request
+  createVolumeFullCopyParams := block.NewCreateVolumeFullCopyParams().
+                        WithID("urn:storageos:Volume:8c727aea-7bee-4671-bd28-6323d360c183:vdc1").
+                        WithBody(b)
+
+
+	//use any function to do REST operations
+	resp, err := client.Block.CreateVolumeFullCopy(createVolumeFullCopyParams, authInfo)
+	if err != nil {
+		log.Fatal(err)
+	}
+  fmt.Printf("%#v\n", resp.Payload)
+}
+
+func TestExpandVolume(t *testing.T) {
+
+  // Init
+  client, authInfo := Init()
+
+  // Construct Request Parameters
+  b := &models.ExpandVolume {
+      NewSize: "20GB",
+    }
+
+  // Create Object to Request
+  createExpandVolumeParams := block.NewExpandVolumeParams().
+                        WithID("urn:storageos:Volume:8c727aea-7bee-4671-bd28-6323d360c183:vdc1").
+                        WithBody(b)
+
+
+	//use any function to do REST operations
+	resp, err := client.Block.ExpandVolume(createExpandVolumeParams, authInfo)
+	if err != nil {
+		log.Fatal(err)
+	}
+  fmt.Printf("%#v\n", resp.Payload)
+}
+
+func TestListVolumeSearch(t *testing.T) {
+
+  // Init
+  client, authInfo := Init()
+
+  name := "gocoprhd"
+  // Create Object to Request
+  listVolumeSearch := block.NewListVolumeSearchParams().
+                                    WithName(&name)
+                                    //WithProject(&project)
+                                    //WithTag(&name)
+                                    //WithWwn(&wwn)
+
+	//use any function to do REST operations
+	resp, err := client.Block.ListVolumeSearch(listVolumeSearch, authInfo)
+	if err != nil {
+		log.Fatal(err)
+	}
+  fmt.Printf("%#v\n", resp.Payload)
+  fmt.Printf("######################\n")
+  for _, r := range resp.Payload.Resource {
+    fmt.Printf("Match ID: %#v\n", r.ID)
+    fmt.Printf("Match: %#v\n", r.Match)
+  }
+  fmt.Printf("######################\n")
 }

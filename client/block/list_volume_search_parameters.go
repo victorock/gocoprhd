@@ -38,29 +38,51 @@ for the list volume search operation typically these are written to a http.Reque
 */
 type ListVolumeSearchParams struct {
 
-	/*Item
-	  Item to search
-
-	*/
-	Item string
 	/*Name
-	  String to match
+	  Name to match
 
 	*/
-	Name string
+	Name *string
+	/*Project
+	  Project URN to match
+
+	*/
+	Project *string
+	/*Tag
+	  Tag to match
+
+	*/
+	Tag *string
+	/*Wwn
+	  wwn to match
+
+	*/
+	Wwn *string
 
 	timeout time.Duration
 }
 
-// WithItem adds the item to the list volume search params
-func (o *ListVolumeSearchParams) WithItem(Item string) *ListVolumeSearchParams {
-	o.Item = Item
+// WithName adds the name to the list volume search params
+func (o *ListVolumeSearchParams) WithName(Name *string) *ListVolumeSearchParams {
+	o.Name = Name
 	return o
 }
 
-// WithName adds the name to the list volume search params
-func (o *ListVolumeSearchParams) WithName(Name string) *ListVolumeSearchParams {
-	o.Name = Name
+// WithProject adds the project to the list volume search params
+func (o *ListVolumeSearchParams) WithProject(Project *string) *ListVolumeSearchParams {
+	o.Project = Project
+	return o
+}
+
+// WithTag adds the tag to the list volume search params
+func (o *ListVolumeSearchParams) WithTag(Tag *string) *ListVolumeSearchParams {
+	o.Tag = Tag
+	return o
+}
+
+// WithWwn adds the wwn to the list volume search params
+func (o *ListVolumeSearchParams) WithWwn(Wwn *string) *ListVolumeSearchParams {
+	o.Wwn = Wwn
 	return o
 }
 
@@ -70,14 +92,68 @@ func (o *ListVolumeSearchParams) WriteToRequest(r runtime.ClientRequest, reg str
 	r.SetTimeout(o.timeout)
 	var res []error
 
-	// path param item
-	if err := r.SetPathParam("item", o.Item); err != nil {
-		return err
+	if o.Name != nil {
+
+		// query param name
+		var qrName string
+		if o.Name != nil {
+			qrName = *o.Name
+		}
+		qName := qrName
+		if qName != "" {
+			if err := r.SetQueryParam("name", qName); err != nil {
+				return err
+			}
+		}
+
 	}
 
-	// path param name
-	if err := r.SetPathParam("name", o.Name); err != nil {
-		return err
+	if o.Project != nil {
+
+		// query param project
+		var qrProject string
+		if o.Project != nil {
+			qrProject = *o.Project
+		}
+		qProject := qrProject
+		if qProject != "" {
+			if err := r.SetQueryParam("project", qProject); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.Tag != nil {
+
+		// query param tag
+		var qrTag string
+		if o.Tag != nil {
+			qrTag = *o.Tag
+		}
+		qTag := qrTag
+		if qTag != "" {
+			if err := r.SetQueryParam("tag", qTag); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.Wwn != nil {
+
+		// query param wwn
+		var qrWwn string
+		if o.Wwn != nil {
+			qrWwn = *o.Wwn
+		}
+		qWwn := qrWwn
+		if qWwn != "" {
+			if err := r.SetQueryParam("wwn", qWwn); err != nil {
+				return err
+			}
+		}
+
 	}
 
 	if len(res) > 0 {

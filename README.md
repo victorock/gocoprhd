@@ -25,6 +25,7 @@ The following REST and methods implementations are part of this release:
 /block/volumes/{id}/protection/snapshots.json:
 
     operationId: CreateVolumeSnapshot
+
     operationId: ListVolumeSnapshots
 
 /block/volumes/bulk.json:
@@ -34,6 +35,10 @@ The following REST and methods implementations are part of this release:
 /block/volumes/{id}.json:
 
     operationId: ShowVolume
+
+/block/volumes/{id}/protection/full-copies.json:
+
+    operationId: CreateVolumeFullCopy
 
 /block/volumes/{id}/exports.json:
 
@@ -83,7 +88,7 @@ The following REST and methods implementations are part of this release:
 
     operationId: ShowTask
 
-/block/volumes/search.json?{item}={name}:
+/block/volumes/search.json:
 
     operationId: ListVolumeSearch
 
@@ -291,17 +296,47 @@ Execute the request with the populated struct:
     fmt.Printf("%#v\n", resp.Payload)
 ```
 
+## Limitations
+- Virtual Arrays and Virtual Pools are already configured and operational to consume.
+- The Host and Initiator entries already exists in the Interface.
+
+## TODO
+Extend the APIs coverage in the swagger-spec/coprhd.yml for Compute:
+
+Host:
+- Create Host
+- Show Host
+- List Hosts
+
+Initiator:
+- Create Initiator
+- Show Initiator
+- List Initiators
+
 ## Contribution
 Create a fork of the project into your own repository.
 
 Run the tests provided in `gocoprhd_test.go` to verify GET/POST/DELETE still function:
 ```
-env DEBUG=1 go test -run TestListVolumes -v
-env DEBUG=1 go test -run TestListVolumeExports -v
-env DEBUG=1 go test -run TestListSnapshots -v
+env DEBUG=1 go test -run TestCreateExport -v
+env DEBUG=1 go test -run TestCreateSnapshotFullCopy -v
 env DEBUG=1 go test -run TestCreateVolume -v
+env DEBUG=1 go test -run TestCreateVolumeFullCopy -v
+env DEBUG=1 go test -run TestCreateVolumeSnapshot -v
+env DEBUG=1 go test -run TestDeleteExport -v
+env DEBUG=1 go test -run TestDeleteSnapshot -v
+env DEBUG=1 go test -run TestDeleteVolume -v
+env DEBUG=1 go test -run TestExpandVolume -v
+env DEBUG=1 go test -run TestListSnapshots -v
 env DEBUG=1 go test -run TestListTasks -v
+env DEBUG=1 go test -run TestListVolumeExports -v
+env DEBUG=1 go test -run TestListVolumeSearch -v
+env DEBUG=1 go test -run TestListVolumeSnapshots -v
+env DEBUG=1 go test -run TestListVolumes -v
+env DEBUG=1 go test -run TestLogin -v
+env DEBUG=1 go test -run TestShowSnapshot -v
 env DEBUG=1 go test -run TestShowTask -v
+env DEBUG=1 go test -run TestShowVolume -v
 ```
 
 If tests do not pass, please create an issue so it can be addressed or fix and create a PR.

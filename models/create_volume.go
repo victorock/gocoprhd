@@ -33,7 +33,7 @@ type CreateVolume struct {
 
 	/* size
 	 */
-	Size int32 `json:"size,omitempty"`
+	Size string `json:"size,omitempty"`
 
 	/* varray
 	 */

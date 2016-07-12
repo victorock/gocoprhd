@@ -46,20 +46,22 @@ func NewListVolumeSearchOK() *ListVolumeSearchOK {
 
 /*ListVolumeSearchOK handles this case with default header values.
 
-Generic Object
+Search Resources Object
 */
 type ListVolumeSearchOK struct {
-	Payload ListVolumeSearchOKBodyBody
+	Payload *models.SearchResources
 }
 
 func (o *ListVolumeSearchOK) Error() string {
-	return fmt.Sprintf("[GET /block/volumes/search.json?{item}={name}][%d] listVolumeSearchOK  %+v", 200, o.Payload)
+	return fmt.Sprintf("[GET /block/volumes/search.json][%d] listVolumeSearchOK  %+v", 200, o.Payload)
 }
 
 func (o *ListVolumeSearchOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
+	o.Payload = new(models.SearchResources)
+
 	// response payload
-	if err := consumer.Consume(response.Body(), &o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
 		return err
 	}
 
@@ -89,7 +91,7 @@ func (o *ListVolumeSearchDefault) Code() int {
 }
 
 func (o *ListVolumeSearchDefault) Error() string {
-	return fmt.Sprintf("[GET /block/volumes/search.json?{item}={name}][%d] ListVolumeSearch default  %+v", o._statusCode, o.Payload)
+	return fmt.Sprintf("[GET /block/volumes/search.json][%d] ListVolumeSearch default  %+v", o._statusCode, o.Payload)
 }
 
 func (o *ListVolumeSearchDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -103,9 +105,3 @@ func (o *ListVolumeSearchDefault) readResponse(response runtime.ClientResponse, 
 
 	return nil
 }
-
-/*ListVolumeSearchOKBodyBody list volume search o k body body
-
-swagger:model ListVolumeSearchOKBodyBody
-*/
-type ListVolumeSearchOKBodyBody interface{}

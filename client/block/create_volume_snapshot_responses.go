@@ -49,7 +49,7 @@ func NewCreateVolumeSnapshotAccepted() *CreateVolumeSnapshotAccepted {
 Task Object
 */
 type CreateVolumeSnapshotAccepted struct {
-	Payload *models.Task
+	Payload *models.Tasks
 }
 
 func (o *CreateVolumeSnapshotAccepted) Error() string {
@@ -58,7 +58,7 @@ func (o *CreateVolumeSnapshotAccepted) Error() string {
 
 func (o *CreateVolumeSnapshotAccepted) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	o.Payload = new(models.Task)
+	o.Payload = new(models.Tasks)
 
 	// response payload
 	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {

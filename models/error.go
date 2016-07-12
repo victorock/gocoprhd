@@ -19,13 +19,17 @@ type Error struct {
 	 */
 	Code int32 `json:"code,omitempty"`
 
-	/* fields
+	/* description
 	 */
-	Fields string `json:"fields,omitempty"`
+	Description string `json:"description,omitempty"`
 
-	/* message
+	/* details
 	 */
-	Message string `json:"message,omitempty"`
+	Details string `json:"details,omitempty"`
+
+	/* retryable
+	 */
+	Retryable bool `json:"retryable,omitempty"`
 }
 
 // Validate validates this error
