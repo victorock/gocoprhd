@@ -36,7 +36,7 @@ The following REST and methods implementations are part of this release:
 
 /block/volumes/{id}/exports.json:
 
-    operationId: ShowVolumeExports
+    operationId: ListVolumeExports
 
 /block/volumes/{id}/expand.json:
 
@@ -296,6 +296,7 @@ Create a fork of the project into your own repository.
 Run the tests provided in `gocoprhd_test.go` to verify GET/POST/DELETE still function:
 ```
 env DEBUG=1 go test -run TestListVolumes -v
+env DEBUG=1 go test -run TestListVolumeExports -v
 env DEBUG=1 go test -run TestListSnapshots -v
 env DEBUG=1 go test -run TestCreateVolume -v
 env DEBUG=1 go test -run TestListTasks -v

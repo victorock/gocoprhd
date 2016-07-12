@@ -72,6 +72,11 @@ func TestListVolumes(t *testing.T) {
   }
   fmt.Printf("%#v\n", resp.Payload)
 
+  for _, v := range resp.Payload.ID {
+    fmt.Printf("#####################\n")
+    fmt.Printf("Volume ID: %#v\n", v)
+  }
+
 }
 
 // Test Get Snapshots
@@ -252,7 +257,12 @@ func TestListTasks(t *testing.T) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("%#v\n", resp.Payload)
+
+  fmt.Printf("%#v\n", resp.Payload)
+  for _, t := range resp.Payload.Task {
+    fmt.Printf("######################\n")
+    fmt.Printf("Task ID: %#v\n", t.ID)
+  }
 }
 
 // Test Get Tasks
@@ -316,7 +326,7 @@ func TestShowTask(t *testing.T) {
 }
 
 // Test Get Tasks
-func TestShowVolumeExports(t *testing.T) {
+func TestListVolumeExports(t *testing.T) {
 
   // create the transport
   transport := httptransport.New("localhost:4443", "/", []string{"https"})
@@ -364,11 +374,11 @@ func TestShowVolumeExports(t *testing.T) {
                                       login.XSDSAUTHTOKEN)
 
   // Create Object to Request
-  showVolumeExportsParams := block.NewShowVolumeExportsParams().
+  listVolumeExportsParams := block.NewListVolumeExportsParams().
                     WithID("urn:storageos:Volume:ab871dd4-e41c-4959-9b92-e9c600c2f612:vdc1")
 
 	//use any function to do REST operations
-	resp, err := client.Block.ShowVolumeExports(showVolumeExportsParams, authInfo)
+	resp, err := client.Block.ListVolumeExports(listVolumeExportsParams, authInfo)
 	if err != nil {
 		log.Fatal(err)
 	}

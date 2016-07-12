@@ -379,6 +379,37 @@ func (a *Client) ListSnapshots(params *ListSnapshotsParams, authInfo runtime.Cli
 }
 
 /*
+ListVolumeExports lists volume exports
+
+"Return all the export information related to this volume.
+This will be in the form of a list of initiator / target pairs for all the
+initiators that have been paired with a target storage port."
+
+*/
+func (a *Client) ListVolumeExports(params *ListVolumeExportsParams, authInfo runtime.ClientAuthInfoWriter) (*ListVolumeExportsOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewListVolumeExportsParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "ListVolumeExports",
+		Method:             "GET",
+		PathPattern:        "/block/volumes/{id}/exports.json",
+		ProducesMediaTypes: []string{"application/json", "application/x-gzip"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http", "https"},
+		Params:             params,
+		Reader:             &ListVolumeExportsReader{formats: a.formats},
+		AuthInfo:           authInfo,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*ListVolumeExportsOK), nil
+}
+
+/*
 ListVolumeSearch searches for item with name
 
 Search resources by name, tag, project or additional parameters
@@ -493,37 +524,6 @@ func (a *Client) ShowVolume(params *ShowVolumeParams, authInfo runtime.ClientAut
 		return nil, err
 	}
 	return result.(*ShowVolumeOK), nil
-}
-
-/*
-ShowVolumeExports shows volume exports
-
-"Return all the export information related to this volume.
-This will be in the form of a list of initiator / target pairs for all the
-initiators that have been paired with a target storage port."
-
-*/
-func (a *Client) ShowVolumeExports(params *ShowVolumeExportsParams, authInfo runtime.ClientAuthInfoWriter) (*ShowVolumeExportsOK, error) {
-	// TODO: Validate the params before sending
-	if params == nil {
-		params = NewShowVolumeExportsParams()
-	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
-		ID:                 "ShowVolumeExports",
-		Method:             "GET",
-		PathPattern:        "/block/volumes/{id}/exports.json",
-		ProducesMediaTypes: []string{"application/json", "application/x-gzip"},
-		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"http", "https"},
-		Params:             params,
-		Reader:             &ShowVolumeExportsReader{formats: a.formats},
-		AuthInfo:           authInfo,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return result.(*ShowVolumeExportsOK), nil
 }
 
 /*

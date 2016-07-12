@@ -5,7 +5,6 @@ package models
 
 import (
 	strfmt "github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
 
 	"github.com/go-openapi/errors"
 )
@@ -15,6 +14,7 @@ import (
 swagger:model Task
 */
 type Task struct {
+	Resource
 
 	/* associated resources
 	 */
@@ -40,10 +40,6 @@ type Task struct {
 	 */
 	Internal bool `json:"internal,omitempty"`
 
-	/* link
-	 */
-	Link *Link `json:"link,omitempty"`
-
 	/* message
 	 */
 	Message string `json:"message,omitempty"`
@@ -59,10 +55,6 @@ type Task struct {
 	/* remote
 	 */
 	Remote bool `json:"remote,omitempty"`
-
-	/* resource
-	 */
-	Resource *Resource `json:"resource,omitempty"`
 
 	/* start time
 	 */
@@ -89,33 +81,23 @@ type Task struct {
 func (m *Task) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.Resource.Validate(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateAssociatedResources(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
-	if err := m.validateLink(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
-	if err := m.validateResource(formats); err != nil {
-		// prop
 		res = append(res, err)
 	}
 
 	if err := m.validateTags(formats); err != nil {
-		// prop
 		res = append(res, err)
 	}
 
 	if err := m.validateTenant(formats); err != nil {
-		// prop
 		res = append(res, err)
 	}
 
 	if err := m.validateVdc(formats); err != nil {
-		// prop
 		res = append(res, err)
 	}
 
@@ -127,59 +109,15 @@ func (m *Task) Validate(formats strfmt.Registry) error {
 
 func (m *Task) validateAssociatedResources(formats strfmt.Registry) error {
 
-	if swag.IsZero(m.AssociatedResources) { // not required
-		return nil
-	}
-
-	return nil
-}
-
-func (m *Task) validateLink(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.Link) { // not required
-		return nil
-	}
-
-	if m.Link != nil {
-
-		if err := m.Link.Validate(formats); err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *Task) validateResource(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.Resource) { // not required
-		return nil
-	}
-
-	if m.Resource != nil {
-
-		if err := m.Resource.Validate(formats); err != nil {
-			return err
-		}
-	}
-
 	return nil
 }
 
 func (m *Task) validateTags(formats strfmt.Registry) error {
 
-	if swag.IsZero(m.Tags) { // not required
-		return nil
-	}
-
 	return nil
 }
 
 func (m *Task) validateTenant(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.Tenant) { // not required
-		return nil
-	}
 
 	if m.Tenant != nil {
 
@@ -192,10 +130,6 @@ func (m *Task) validateTenant(formats strfmt.Registry) error {
 }
 
 func (m *Task) validateVdc(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.Vdc) { // not required
-		return nil
-	}
 
 	if m.Vdc != nil {
 

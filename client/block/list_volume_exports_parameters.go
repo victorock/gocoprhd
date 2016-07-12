@@ -13,30 +13,30 @@ import (
 	strfmt "github.com/go-openapi/strfmt"
 )
 
-// NewShowVolumeExportsParams creates a new ShowVolumeExportsParams object
+// NewListVolumeExportsParams creates a new ListVolumeExportsParams object
 // with the default values initialized.
-func NewShowVolumeExportsParams() *ShowVolumeExportsParams {
+func NewListVolumeExportsParams() *ListVolumeExportsParams {
 	var ()
-	return &ShowVolumeExportsParams{
+	return &ListVolumeExportsParams{
 
 		timeout: cr.DefaultTimeout,
 	}
 }
 
-// NewShowVolumeExportsParamsWithTimeout creates a new ShowVolumeExportsParams object
+// NewListVolumeExportsParamsWithTimeout creates a new ListVolumeExportsParams object
 // with the default values initialized, and the ability to set a timeout on a request
-func NewShowVolumeExportsParamsWithTimeout(timeout time.Duration) *ShowVolumeExportsParams {
+func NewListVolumeExportsParamsWithTimeout(timeout time.Duration) *ListVolumeExportsParams {
 	var ()
-	return &ShowVolumeExportsParams{
+	return &ListVolumeExportsParams{
 
 		timeout: timeout,
 	}
 }
 
-/*ShowVolumeExportsParams contains all the parameters to send to the API endpoint
-for the show volume exports operation typically these are written to a http.Request
+/*ListVolumeExportsParams contains all the parameters to send to the API endpoint
+for the list volume exports operation typically these are written to a http.Request
 */
-type ShowVolumeExportsParams struct {
+type ListVolumeExportsParams struct {
 
 	/*ID
 	  The URN of a ViPR/CoprHD Volume
@@ -47,14 +47,14 @@ type ShowVolumeExportsParams struct {
 	timeout time.Duration
 }
 
-// WithID adds the id to the show volume exports params
-func (o *ShowVolumeExportsParams) WithID(ID string) *ShowVolumeExportsParams {
+// WithID adds the id to the list volume exports params
+func (o *ListVolumeExportsParams) WithID(ID string) *ListVolumeExportsParams {
 	o.ID = ID
 	return o
 }
 
 // WriteToRequest writes these params to a swagger request
-func (o *ShowVolumeExportsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
+func (o *ListVolumeExportsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
 
 	r.SetTimeout(o.timeout)
 	var res []error

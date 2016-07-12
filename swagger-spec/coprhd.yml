@@ -161,14 +161,14 @@ paths:
   /block/volumes/{id}/exports.json:
     get:
       summary: |
-        Show Volume Exports
+        List Volume Exports
       description: |
         "Return all the export information related to this volume.
         This will be in the form of a list of initiator / target pairs for all the
         initiators that have been paired with a target storage port."
       tags:
         - block
-      operationId: ShowVolumeExports
+      operationId: ListVolumeExports
       parameters:
         - name: id
           description: The URN of a ViPR/CoprHD Volume
@@ -603,48 +603,50 @@ definitions:
       href:
         type: string
   Task:
-    type: object
-    properties:
-      inactive:
-        type: boolean
-      global:
-        type: boolean
-      remote:
-        type: boolean
-      internal:
-        type: boolean
-      progress:
-        type: integer
-      start_time:
-        type: integer
-        format: int64
-      creation_time:
-        type: integer
-        format: int64
-      vdc:
-        $ref: '#/definitions/Resource'
-      tenant:
-        $ref: '#/definitions/Resource'
-      resource:
-        $ref: '#/definitions/Resource'
-      link:
-        $ref: '#/definitions/Link'
-      associated_resources:
-        type: array
-        items:
+    allOf:
+    - $ref: '#/definitions/Resource'
+    - type: object
+      properties:
+        inactive:
+          type: boolean
+        global:
+          type: boolean
+        remote:
+          type: boolean
+        internal:
+          type: boolean
+        progress:
+          type: integer
+        start_time:
+          type: integer
+          format: int64
+        creation_time:
+          type: integer
+          format: int64
+        vdc:
+          $ref: '#/definitions/Resource'
+        tenant:
+          $ref: '#/definitions/Resource'
+        #      resource:
+        #        $ref: '#/definitions/Resource'
+        #      link:
+        #        $ref: '#/definitions/Link'
+        associated_resources:
+          type: array
+          items:
+            type: string
+        tags:
+          type: array
+          items:
+            type: string
+        state:
           type: string
-      tags:
-        type: array
-        items:
+        op_id:
           type: string
-      state:
-        type: string
-      op_id:
-        type: string
-      description:
-        type: string
-      message:
-        type: string
+        description:
+          type: string
+        message:
+          type: string
   Tasks:
     type: object
     properties:
