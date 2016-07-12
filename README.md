@@ -125,25 +125,35 @@ This sample script will retrieve (List) all volumes. Take a look at `gocoprhd_te
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 	"os"
 	"testing"
+  "crypto/tls"
+  "net/http"
 
 	httptransport "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
 
 	apiclient "github.com/victorock/gocoprhd/client"
-	//"github.com/victorock/gocoprhd/client/block"
+  "github.com/victorock/gocoprhd/client/block"
+  "github.com/victorock/gocoprhd/client/vdc"
+  "github.com/victorock/gocoprhd/models"
 )
 
 // Test Get Volumes
-func TestBlockListVolumes(t *testing.T) {
+func TestListVolumes(t *testing.T) {
 
   // create the transport
   transport := httptransport.New("localhost:4443", "/", []string{"https"})
   authInfo := httptransport.BasicAuth( "root", "password")
+
+  // Set insecure SSL
+  transport.Transport = &http.Transport{
+				TLSClientConfig: &tls.Config{
+					InsecureSkipVerify: true,
+				},
+			}
 
 
   // If not using the Vagrant image, set this environment variable to something other than localhost:4443
@@ -153,9 +163,9 @@ func TestBlockListVolumes(t *testing.T) {
 
   // Get the token to populate header for requests
   if os.Getenv("GOCOPRHD_TOKEN") != "" {
-      authInfo = transport.APIKeyAuth( "X-SDS-AUTH-TOKEN",
-                                        "header",
-                                        os.Getenv("GOCOPRHD_TOKEN"))
+      authInfo = httptransport.APIKeyAuth( "X-SDS-AUTH-TOKEN",
+                                            "header",
+                                            os.Getenv("GOCOPRHD_TOKEN"))
   }
 
   // Basic Authentication to get the user Token
@@ -176,9 +186,9 @@ func TestBlockListVolumes(t *testing.T) {
   }
 
   // Populate the Header with token from now on
-  authInfo := transport.APIKeyAuth( "X-SDS-AUTH-TOKEN",
-                                    "header",
-                                    login.XSDSAUTHTOKEN)
+  authInfo := httptransport.APIKeyAuth( "X-SDS-AUTH-TOKEN",
+                                        "header",
+                                        login.XSDSAUTHTOKEN)
 
   //use any function to do REST operations
   resp, err := client.Block.ListVolumes(nil, authInfo)
@@ -200,7 +210,7 @@ import (
 )
 ```
 
-Import the JSON structs ([See Definitions] (./swagger-spec/coprhd.yml))
+Import the Models Library ([See Definitions] (./swagger-spec/coprhd.yml))
 ```
 import (
     ...
@@ -216,6 +226,14 @@ Create the transport and point to the API Gateway Service:
   // create the transport
   transport := httptransport.New("localhost:4443", "/", []string{"https"})
 
+  // Set insecure SSL
+  transport.Transport = &http.Transport{
+        TLSClientConfig: &tls.Config{
+          InsecureSkipVerify: true,
+        },
+      }
+
+
   // create the API client, with the transport
   client := apiclient.New(transport, strfmt.Default)
 ```
@@ -224,43 +242,46 @@ Create the transport and point to the API Gateway Service:
 
 Login with Basic Authentication and get the TOKEN for further requests:
 ```
-authInfo := httptransport.BasicAuth( "root", "password")
+  authInfo := httptransport.BasicAuth( "root", "password")
 
-// Login to get our Token
-resp, err := client.Authentication.Login(nil, authInfo)
-if err != nil {
-    log.Fatal(err)
-}
+  // Login to get our Token
+  resp, err := client.Authentication.Login(nil, authInfo)
+  if err != nil {
+      log.Fatal(err)
+  }
 
-// Populate the Header with token from now on
-authInfo := transport.APIKeyAuth( "X-SDS-AUTH-TOKEN",
-                                  "header",
-                                  resp.XSDSAUTHTOKEN)
+  // Populate the Header with token from now on
+  authInfo := transport.APIKeyAuth( "X-SDS-AUTH-TOKEN",
+                                    "header",
+                                    resp.XSDSAUTHTOKEN)
 
 ```
 
-### Populate the object (struct) for your request
+### Create the Body with the object of your request
 
 Populate the struct params, and create the object to use in your request:
 ```
-  b := &CreateVolume {
-          ConsistencyGroup: nil,
-          Count: "1",
-          Name: "test_vol01",
-          Project: "project01",
-          Size: "10GB",
-          Varray: "varray01",
-          Vpool: "vpool01",
+  // Construct Request Parameters
+  b := &models.CreateVolume {
+          ConsistencyGroup: "",
+          Count: 1,
+          Name: "gocoprhd_test_vol01",
+          Project: "urn:storageos:Project:7d46540b-140c-4f39-91b8-52d276356cf0:global",
+          Size: 10,
+          Varray: "urn:storageos:VirtualArray:ad18dd81-99c6-415d-9081-6091db3df599:vdc1",
+          Vpool: "urn:storageos:VirtualPool:7e036b4a-9cba-4357-9afc-3aa7539f10c0:vdc1",
         }
-    CreateVolumeParams := client.Block.NewCreateVolumeParams().
-                          WithBody(b);
+
+  // Create the New Params and Populate the Body
+  CreateVolumeParams := block.NewCreateVolumeParams().
+                              WithBody(b)
 ```
 
-### Execute the action from Service Catalog
+### Execute the request
 
 Execute the request with the populated struct:
 ```
-    resp, err := client.Block.CreateVolume(&CreateVolumeParams, authInfo)
+    resp, err := client.Block.CreateVolume(CreateVolumeParams, authInfo)
     if err != nil {
       log.Fatal(err)
     }

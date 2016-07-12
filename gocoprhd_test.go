@@ -23,12 +23,13 @@ func TestListVolumes(t *testing.T) {
   // create the transport
   transport := httptransport.New("localhost:4443", "/", []string{"https"})
   authInfo := httptransport.BasicAuth( "root", "password")
+
+  // Set Insecure SSL
   transport.Transport = &http.Transport{
 				TLSClientConfig: &tls.Config{
 					InsecureSkipVerify: true,
 				},
 			}
-
 
   // If not using the Vagrant image, set this environment variable to something other than localhost:4443
   if os.Getenv("GOCOPRHD_ENDPOINT") != "" {
@@ -79,12 +80,13 @@ func TestListSnapshots(t *testing.T) {
   // create the transport
   transport := httptransport.New("localhost:4443", "/", []string{"https"})
   authInfo := httptransport.BasicAuth( "root", "password")
+
+  // Set Insecure SSL
   transport.Transport = &http.Transport{
 				TLSClientConfig: &tls.Config{
 					InsecureSkipVerify: true,
 				},
 			}
-
 
   // If not using the Vagrant image, set this environment variable to something other than localhost:4443
   if os.Getenv("GOCOPRHD_ENDPOINT") != "" {
@@ -134,12 +136,13 @@ func TestCreateVolume(t *testing.T) {
   // create the transport
   transport := httptransport.New("localhost:4443", "/", []string{"https"})
   authInfo := httptransport.BasicAuth( "root", "password")
+
+  // Set Insecure SSL
   transport.Transport = &http.Transport{
 				TLSClientConfig: &tls.Config{
 					InsecureSkipVerify: true,
 				},
 			}
-
 
   // If not using the Vagrant image, set this environment variable to something other than localhost:4443
   if os.Getenv("GOCOPRHD_ENDPOINT") != "" {
@@ -176,6 +179,7 @@ func TestCreateVolume(t *testing.T) {
                                       login.XSDSAUTHTOKEN)
   // Construct Request Parameters
   b := &models.CreateVolume {
+          ConsistencyGroup: "",
           Count: 1,
           Name: "gocoprhd_test_vol01",
           Project: "urn:storageos:Project:7d46540b-140c-4f39-91b8-52d276356cf0:global",
@@ -184,8 +188,9 @@ func TestCreateVolume(t *testing.T) {
           Vpool: "urn:storageos:VirtualPool:7e036b4a-9cba-4357-9afc-3aa7539f10c0:vdc1",
         }
 
-  CreateVolumeParams := block.NewCreateVolumeParams()
-  CreateVolumeParams.Body = b
+  // Create the New Params and Populate the Body
+  CreateVolumeParams := block.NewCreateVolumeParams().
+                              WithBody(b)
 
 	//use any function to do REST operations
 	resp, err := client.Block.CreateVolume(CreateVolumeParams, authInfo)
@@ -256,12 +261,13 @@ func TestShowTask(t *testing.T) {
   // create the transport
   transport := httptransport.New("localhost:4443", "/", []string{"https"})
   authInfo := httptransport.BasicAuth( "root", "password")
+
+  // Set Insecure SSL
   transport.Transport = &http.Transport{
 				TLSClientConfig: &tls.Config{
 					InsecureSkipVerify: true,
 				},
 			}
-
 
   // If not using the Vagrant image, set this environment variable to something other than localhost:4443
   if os.Getenv("GOCOPRHD_ENDPOINT") != "" {
