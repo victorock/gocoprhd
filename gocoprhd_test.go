@@ -304,8 +304,8 @@ func TestShowTask(t *testing.T) {
                                       login.XSDSAUTHTOKEN)
 
   // Create Object to Request
-  showTaskParams := vdc.NewShowTaskParams()
-  showTaskParams.ID = "urn:storageos:Task:16030dd1-81b6-47ff-9243-a78032134691:vdc1"
+  showTaskParams := vdc.NewShowTaskParams().
+                    WithID("urn:storageos:Task:16030dd1-81b6-47ff-9243-a78032134691:vdc1")
 
 	//use any function to do REST operations
 	resp, err := client.Vdc.ShowTask(showTaskParams, authInfo)
@@ -315,4 +315,71 @@ func TestShowTask(t *testing.T) {
 	fmt.Printf("%#v\n", resp.Payload)
 }
 
-//DeleteVolume urn:storageos:Volume:e8b68ad0-bb87-41ed-9dee-7b815cd5e15b:vdc1
+// Test Get Tasks
+func TestShowVolumeExports(t *testing.T) {
+
+  // create the transport
+  transport := httptransport.New("localhost:4443", "/", []string{"https"})
+  authInfo := httptransport.BasicAuth( "root", "password")
+
+  // Set Insecure SSL
+  transport.Transport = &http.Transport{
+				TLSClientConfig: &tls.Config{
+					InsecureSkipVerify: true,
+				},
+			}
+
+  // If not using the Vagrant image, set this environment variable to something other than localhost:4443
+  if os.Getenv("GOCOPRHD_ENDPOINT") != "" {
+      transport.Host = os.Getenv("GOCOPRHD_ENDPOINT")
+  }
+
+  // Get the token to populate header for requests
+  if os.Getenv("GOCOPRHD_TOKEN") != "" {
+      authInfo = httptransport.APIKeyAuth("X-SDS-AUTH-TOKEN",
+                                          "header",
+                                          os.Getenv("GOCOPRHD_TOKEN"))
+  }
+
+  // Basic Authentication to get the user Token
+  if os.Getenv("GOCOPRHD_USERNAME") != "" {
+    if os.Getenv("GOCOPRHD_PASSWORD") != "" {
+      authInfo = httptransport.BasicAuth(os.Getenv("GOCOPRHD_USERNAME"),
+                                          os.Getenv("GOCOPRHD_PASSWORD"))
+    }
+  }
+
+  // create the API client, with the transport
+  client := apiclient.New(transport, strfmt.Default)
+
+  // Login to get our Token
+  login, err := client.Authentication.Login(nil, authInfo)
+  if err != nil {
+      log.Fatal(err)
+  }
+
+  // Populate the Header with token from now on
+  authInfo = httptransport.APIKeyAuth("X-SDS-AUTH-TOKEN",
+                                      "header",
+                                      login.XSDSAUTHTOKEN)
+
+  // Create Object to Request
+  showVolumeExportsParams := block.NewShowVolumeExportsParams().
+                    WithID("urn:storageos:Volume:ab871dd4-e41c-4959-9b92-e9c600c2f612:vdc1")
+
+	//use any function to do REST operations
+	resp, err := client.Block.ShowVolumeExports(showVolumeExportsParams, authInfo)
+	if err != nil {
+		log.Fatal(err)
+	}
+  fmt.Printf("%#v\n", resp.Payload)
+  for _, exp := range resp.Payload.Itl {
+    fmt.Printf("######################\n")
+    fmt.Printf("Initiator ID: %#v\n", exp.Initiator.ID)
+    fmt.Printf("Initiator Port: %#v\n", exp.Initiator.Port)
+    fmt.Printf("Export ID: %#v\n", exp.Export.ID)
+    fmt.Printf("Export Name: %#v\n", exp.Export.ID)
+    fmt.Printf("Device ID: %#v\n", exp.Device.ID)
+    fmt.Printf("Target ID: %#v\n", exp.Target.ID)
+  }
+}
