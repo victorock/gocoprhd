@@ -49,7 +49,7 @@ func NewListSnapshotsOK() *ListSnapshotsOK {
 Snapshots List
 */
 type ListSnapshotsOK struct {
-	Payload models.Snapshots
+	Payload *models.Snapshots
 }
 
 func (o *ListSnapshotsOK) Error() string {
@@ -58,8 +58,10 @@ func (o *ListSnapshotsOK) Error() string {
 
 func (o *ListSnapshotsOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
+	o.Payload = new(models.Snapshots)
+
 	// response payload
-	if err := consumer.Consume(response.Body(), &o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
 		return err
 	}
 

@@ -1,5 +1,4 @@
-#gocoprhd
-
+#gocoprhd [![Build Status](https://travis-ci.org/victorock/gocoprhd.svg?branch=dev)](https://travis-ci.org/victorock/gocoprhd)
 ### Go bindings for CoprHD
 
 ## Description
@@ -15,58 +14,83 @@ The methods always start with a verb, such as:
 
 The following REST and methods implementations are part of this release:
 
+/login.json:
+
+    operationId: Login
+
 /block/volumes.json:
+
     operationId: CreateVolume
 
 /block/volumes/{id}/protection/snapshots.json:
+
     operationId: CreateVolumeSnapshot
 
 /block/volumes/bulk.json:
+
     operationId: ListVolumes
 
 /block/volumes/{id}.json:
+
     operationId: ShowVolume
 
 /block/volumes/{id}/exports.json:
+
     operationId: ShowVolumeExports
 
 /block/volumes/{id}/expand.json:
+
     operationId: ExpandVolume
 
 /block/volumes/{id}/deactivate.json:
+
     operationId: DeleteVolume
 
 /block/exports.json:
+
     operationId: CreateExport
 
 /block/exports/{id}.json:
+
     operationId: UpdateExport
 
 /block/exports/{id}/deactivate.json:
-    operationId: DeleteExportGroup
+
+    operationId: DeleteExport
 
 /block/snapshots/bulk.json:
+
     operationId: ListSnapshots
 
 /block/snapshots/{id}.json:
+
     operationId: ShowSnapshot
 
 /block/snapshots/{id}/deactivate.json:
+
     operationId: DeleteSnapshot
 
 /block/snapshots/{id}/protection/full-copies.json:
+
     operationId: CreateSnapshotFullCopy
 
+/vdc/tasks.json:
+
+    operationId: ListTasks
+
 /vdc/tasks/{id}.json:
+
     operationId: ShowTask
 
 /block/volumes/search.json?{item}={name}:
-    operationId: CreateVolumeSearch
+    operationId: ListVolumeSearch
+
 
 ## Compatibility
 gocoprhd is created using [go-swagger](https://github.com/go-swagger/go-swagger) client generator. The local swagger specification is created adopting [EMC ViPR API documentation] (https://www.emc.com/techpubs/api/vipr/v2-4-0-0/index.htm).
 
 ## Installation of the client
+
 To install the client:
 ```
 $ go get github.com/victorock/gocoprhd
@@ -87,7 +111,10 @@ The Makefile utilizes [glide](https://github.com/Masterminds/glide) to reference
 ## Environment Variables
 | Name        | Description           |
 | ------------- |:-------------:|
-| `GOCOPRHD_ENDPOINT`      | the API endpoint. `localhost:9090` is used by default if not set             |
+| `GOCOPRHD_ENDPOINT`      | the API endpoint. `localhost:4443` is used by default if not set             |
+| `GOCOPRHD_USERNAME`      | The Username to authenticate             |
+| `GOCOPRHD_PASSWORD`      | The password for authentication             |
+| `GOCOPRHD_TOKEN`      | The token provided by CoprHD/ViPR administrator             |
 
 
 ## Using the client
@@ -143,7 +170,7 @@ func TestBlockListVolumes(t *testing.T) {
   client := apiclient.New(transport, strfmt.Default)
 
   // Login to get our Token
-  resp, err := client.Authentication.Login(nil, authInfo)
+  login, err := client.Authentication.Login(nil, authInfo)
   if err != nil {
       log.Fatal(err)
   }
@@ -151,7 +178,7 @@ func TestBlockListVolumes(t *testing.T) {
   // Populate the Header with token from now on
   authInfo := transport.APIKeyAuth( "X-SDS-AUTH-TOKEN",
                                     "header",
-                                    resp.XSDSAUTHTOKEN)
+                                    login.XSDSAUTHTOKEN)
 
   //use any function to do REST operations
   resp, err := client.Block.ListVolumes(nil, authInfo)
@@ -245,9 +272,11 @@ Create a fork of the project into your own repository.
 
 Run the tests provided in `gocoprhd_test.go` to verify GET/POST/DELETE still function:
 ```
-env DEBUG=1 go test -run TestBlockListVolumes -v
-env DEBUG=1 go test -run TestBlockListSnapshots -v
-env DEBUG=1 go test -run TestBlockCreateVolume -v
+env DEBUG=1 go test -run TestListVolumes -v
+env DEBUG=1 go test -run TestListSnapshots -v
+env DEBUG=1 go test -run TestCreateVolume -v
+env DEBUG=1 go test -run TestListTasks -v
+env DEBUG=1 go test -run TestShowTask -v
 ```
 
 If tests do not pass, please create an issue so it can be addressed or fix and create a PR.

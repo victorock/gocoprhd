@@ -16,9 +16,29 @@ swagger:model Task
 */
 type Task struct {
 
+	/* associated resources
+	 */
+	AssociatedResources []string `json:"associated_resources,omitempty"`
+
+	/* creation time
+	 */
+	CreationTime int64 `json:"creation_time,omitempty"`
+
 	/* description
 	 */
 	Description string `json:"description,omitempty"`
+
+	/* global
+	 */
+	Global bool `json:"global,omitempty"`
+
+	/* inactive
+	 */
+	Inactive bool `json:"inactive,omitempty"`
+
+	/* internal
+	 */
+	Internal bool `json:"internal,omitempty"`
 
 	/* link
 	 */
@@ -32,22 +52,47 @@ type Task struct {
 	 */
 	OpID string `json:"op_id,omitempty"`
 
+	/* progress
+	 */
+	Progress int64 `json:"progress,omitempty"`
+
+	/* remote
+	 */
+	Remote bool `json:"remote,omitempty"`
+
 	/* resource
 	 */
 	Resource *Resource `json:"resource,omitempty"`
 
 	/* start time
 	 */
-	StartTime string `json:"start_time,omitempty"`
+	StartTime int64 `json:"start_time,omitempty"`
 
 	/* state
 	 */
 	State string `json:"state,omitempty"`
+
+	/* tags
+	 */
+	Tags []string `json:"tags,omitempty"`
+
+	/* tenant
+	 */
+	Tenant *Resource `json:"tenant,omitempty"`
+
+	/* vdc
+	 */
+	Vdc *Resource `json:"vdc,omitempty"`
 }
 
 // Validate validates this task
 func (m *Task) Validate(formats strfmt.Registry) error {
 	var res []error
+
+	if err := m.validateAssociatedResources(formats); err != nil {
+		// prop
+		res = append(res, err)
+	}
 
 	if err := m.validateLink(formats); err != nil {
 		// prop
@@ -59,9 +104,33 @@ func (m *Task) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateTags(formats); err != nil {
+		// prop
+		res = append(res, err)
+	}
+
+	if err := m.validateTenant(formats); err != nil {
+		// prop
+		res = append(res, err)
+	}
+
+	if err := m.validateVdc(formats); err != nil {
+		// prop
+		res = append(res, err)
+	}
+
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *Task) validateAssociatedResources(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.AssociatedResources) { // not required
+		return nil
+	}
+
 	return nil
 }
 
@@ -90,6 +159,47 @@ func (m *Task) validateResource(formats strfmt.Registry) error {
 	if m.Resource != nil {
 
 		if err := m.Resource.Validate(formats); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *Task) validateTags(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Tags) { // not required
+		return nil
+	}
+
+	return nil
+}
+
+func (m *Task) validateTenant(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Tenant) { // not required
+		return nil
+	}
+
+	if m.Tenant != nil {
+
+		if err := m.Tenant.Validate(formats); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *Task) validateVdc(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Vdc) { // not required
+		return nil
+	}
+
+	if m.Vdc != nil {
+
+		if err := m.Vdc.Validate(formats); err != nil {
 			return err
 		}
 	}

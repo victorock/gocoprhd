@@ -23,6 +23,35 @@ type Client struct {
 }
 
 /*
+ListTasks lists tasks
+
+Returns a list of tasks for the specified tenant
+
+*/
+func (a *Client) ListTasks(params *ListTasksParams, authInfo runtime.ClientAuthInfoWriter) (*ListTasksOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewListTasksParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "ListTasks",
+		Method:             "GET",
+		PathPattern:        "/vdc/tasks.json",
+		ProducesMediaTypes: []string{"application/json", "application/x-gzip"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http", "https"},
+		Params:             params,
+		Reader:             &ListTasksReader{formats: a.formats},
+		AuthInfo:           authInfo,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*ListTasksOK), nil
+}
+
+/*
 ShowTask shows task
 
 Show Task details.

@@ -90,7 +90,7 @@ determined from the number of required initiator/storage-port
 communication paths.
 
 */
-func (a *Client) CreateExport(params *CreateExportParams, authInfo runtime.ClientAuthInfoWriter) (*CreateExportOK, error) {
+func (a *Client) CreateExport(params *CreateExportParams, authInfo runtime.ClientAuthInfoWriter) (*CreateExportAccepted, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewCreateExportParams()
@@ -110,7 +110,7 @@ func (a *Client) CreateExport(params *CreateExportParams, authInfo runtime.Clien
 	if err != nil {
 		return nil, err
 	}
-	return result.(*CreateExportOK), nil
+	return result.(*CreateExportAccepted), nil
 }
 
 /*
@@ -119,7 +119,7 @@ CreateSnapshotFullCopy creates full copy
 Create a full copy as a volume of the specified snapshot.
 
 */
-func (a *Client) CreateSnapshotFullCopy(params *CreateSnapshotFullCopyParams, authInfo runtime.ClientAuthInfoWriter) (*CreateSnapshotFullCopyOK, error) {
+func (a *Client) CreateSnapshotFullCopy(params *CreateSnapshotFullCopyParams, authInfo runtime.ClientAuthInfoWriter) (*CreateSnapshotFullCopyAccepted, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewCreateSnapshotFullCopyParams()
@@ -139,7 +139,7 @@ func (a *Client) CreateSnapshotFullCopy(params *CreateSnapshotFullCopyParams, au
 	if err != nil {
 		return nil, err
 	}
-	return result.(*CreateSnapshotFullCopyOK), nil
+	return result.(*CreateSnapshotFullCopyAccepted), nil
 }
 
 /*
@@ -152,7 +152,7 @@ volumes. The volumes are created in the same storage pool.
 NOTE=This is an asynchronous operation."
 
 */
-func (a *Client) CreateVolume(params *CreateVolumeParams, authInfo runtime.ClientAuthInfoWriter) (*CreateVolumeOK, error) {
+func (a *Client) CreateVolume(params *CreateVolumeParams, authInfo runtime.ClientAuthInfoWriter) (*CreateVolumeAccepted, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewCreateVolumeParams()
@@ -172,7 +172,7 @@ func (a *Client) CreateVolume(params *CreateVolumeParams, authInfo runtime.Clien
 	if err != nil {
 		return nil, err
 	}
-	return result.(*CreateVolumeOK), nil
+	return result.(*CreateVolumeAccepted), nil
 }
 
 /*
@@ -192,7 +192,7 @@ The snapshot must have come from the volume. A new volume may be created
  at once. NOTE: This is an asynchronous operation.
 
 */
-func (a *Client) CreateVolumeSnapshot(params *CreateVolumeSnapshotParams, authInfo runtime.ClientAuthInfoWriter) (*CreateVolumeSnapshotOK, error) {
+func (a *Client) CreateVolumeSnapshot(params *CreateVolumeSnapshotParams, authInfo runtime.ClientAuthInfoWriter) (*CreateVolumeSnapshotAccepted, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewCreateVolumeSnapshotParams()
@@ -212,11 +212,11 @@ func (a *Client) CreateVolumeSnapshot(params *CreateVolumeSnapshotParams, authIn
 	if err != nil {
 		return nil, err
 	}
-	return result.(*CreateVolumeSnapshotOK), nil
+	return result.(*CreateVolumeSnapshotAccepted), nil
 }
 
 /*
-DeleteExportGroup deletes export group
+DeleteExport deletes export group
 
 Deactivate block export. It will be deleted by the garbage collector on
 a subsequent iteration
@@ -229,27 +229,27 @@ Group Create), they will be removed if they are not in use by other
 Export Groups.
 
 */
-func (a *Client) DeleteExportGroup(params *DeleteExportGroupParams, authInfo runtime.ClientAuthInfoWriter) (*DeleteExportGroupOK, error) {
+func (a *Client) DeleteExport(params *DeleteExportParams, authInfo runtime.ClientAuthInfoWriter) (*DeleteExportAccepted, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
-		params = NewDeleteExportGroupParams()
+		params = NewDeleteExportParams()
 	}
 
 	result, err := a.transport.Submit(&runtime.ClientOperation{
-		ID:                 "DeleteExportGroup",
+		ID:                 "DeleteExport",
 		Method:             "POST",
 		PathPattern:        "/block/exports/{id}/deactivate.json",
 		ProducesMediaTypes: []string{"application/json", "application/x-gzip"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},
 		Params:             params,
-		Reader:             &DeleteExportGroupReader{formats: a.formats},
+		Reader:             &DeleteExportReader{formats: a.formats},
 		AuthInfo:           authInfo,
 	})
 	if err != nil {
 		return nil, err
 	}
-	return result.(*DeleteExportGroupOK), nil
+	return result.(*DeleteExportAccepted), nil
 }
 
 /*
@@ -262,7 +262,7 @@ that is part of a consistency group, then all the related snapshots
 will be deactivated, as well.
 
 */
-func (a *Client) DeleteSnapshot(params *DeleteSnapshotParams, authInfo runtime.ClientAuthInfoWriter) (*DeleteSnapshotOK, error) {
+func (a *Client) DeleteSnapshot(params *DeleteSnapshotParams, authInfo runtime.ClientAuthInfoWriter) (*DeleteSnapshotAccepted, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewDeleteSnapshotParams()
@@ -282,7 +282,7 @@ func (a *Client) DeleteSnapshot(params *DeleteSnapshotParams, authInfo runtime.C
 	if err != nil {
 		return nil, err
 	}
-	return result.(*DeleteSnapshotOK), nil
+	return result.(*DeleteSnapshotAccepted), nil
 }
 
 /*
@@ -296,7 +296,7 @@ the path, it will force the delete of internal volumes that have the
 SUPPORTS_FORCE flag. NOTE: This is an asynchronous operation.
 
 */
-func (a *Client) DeleteVolume(params *DeleteVolumeParams, authInfo runtime.ClientAuthInfoWriter) (*DeleteVolumeOK, error) {
+func (a *Client) DeleteVolume(params *DeleteVolumeParams, authInfo runtime.ClientAuthInfoWriter) (*DeleteVolumeAccepted, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewDeleteVolumeParams()
@@ -316,7 +316,7 @@ func (a *Client) DeleteVolume(params *DeleteVolumeParams, authInfo runtime.Clien
 	if err != nil {
 		return nil, err
 	}
-	return result.(*DeleteVolumeOK), nil
+	return result.(*DeleteVolumeAccepted), nil
 }
 
 /*
@@ -326,7 +326,7 @@ ExpandVolume expands volume
 NOTE: This is an asynchronous operation."
 
 */
-func (a *Client) ExpandVolume(params *ExpandVolumeParams, authInfo runtime.ClientAuthInfoWriter) (*ExpandVolumeOK, error) {
+func (a *Client) ExpandVolume(params *ExpandVolumeParams, authInfo runtime.ClientAuthInfoWriter) (*ExpandVolumeAccepted, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewExpandVolumeParams()
@@ -346,7 +346,7 @@ func (a *Client) ExpandVolume(params *ExpandVolumeParams, authInfo runtime.Clien
 	if err != nil {
 		return nil, err
 	}
-	return result.(*ExpandVolumeOK), nil
+	return result.(*ExpandVolumeAccepted), nil
 }
 
 /*
@@ -552,7 +552,7 @@ request is restricted to enforce the same rules as
 Note: The export group name, project and varray can not be modified.
 
 */
-func (a *Client) UpdateExport(params *UpdateExportParams, authInfo runtime.ClientAuthInfoWriter) (*UpdateExportOK, error) {
+func (a *Client) UpdateExport(params *UpdateExportParams, authInfo runtime.ClientAuthInfoWriter) (*UpdateExportAccepted, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewUpdateExportParams()
@@ -572,7 +572,7 @@ func (a *Client) UpdateExport(params *UpdateExportParams, authInfo runtime.Clien
 	if err != nil {
 		return nil, err
 	}
-	return result.(*UpdateExportOK), nil
+	return result.(*UpdateExportAccepted), nil
 }
 
 // SetTransport changes the transport on the client

@@ -23,8 +23,8 @@ type UpdateExportReader struct {
 func (o *UpdateExportReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
 	switch response.Code() {
 
-	case 200:
-		result := NewUpdateExportOK()
+	case 202:
+		result := NewUpdateExportAccepted()
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
 			return nil, err
 		}
@@ -39,26 +39,26 @@ func (o *UpdateExportReader) ReadResponse(response runtime.ClientResponse, consu
 	}
 }
 
-// NewUpdateExportOK creates a UpdateExportOK with default headers values
-func NewUpdateExportOK() *UpdateExportOK {
-	return &UpdateExportOK{}
+// NewUpdateExportAccepted creates a UpdateExportAccepted with default headers values
+func NewUpdateExportAccepted() *UpdateExportAccepted {
+	return &UpdateExportAccepted{}
 }
 
-/*UpdateExportOK handles this case with default header values.
+/*UpdateExportAccepted handles this case with default header values.
 
 Task Object
 */
-type UpdateExportOK struct {
-	Payload *models.Task
+type UpdateExportAccepted struct {
+	Payload *models.Tasks
 }
 
-func (o *UpdateExportOK) Error() string {
-	return fmt.Sprintf("[PUT /block/exports/{id}.json][%d] updateExportOK  %+v", 200, o.Payload)
+func (o *UpdateExportAccepted) Error() string {
+	return fmt.Sprintf("[PUT /block/exports/{id}.json][%d] updateExportAccepted  %+v", 202, o.Payload)
 }
 
-func (o *UpdateExportOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+func (o *UpdateExportAccepted) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	o.Payload = new(models.Task)
+	o.Payload = new(models.Tasks)
 
 	// response payload
 	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {

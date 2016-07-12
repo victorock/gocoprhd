@@ -49,7 +49,7 @@ func NewListVolumesOK() *ListVolumesOK {
 List of Volumes Ids
 */
 type ListVolumesOK struct {
-	Payload models.Volumes
+	Payload *models.Volumes
 }
 
 func (o *ListVolumesOK) Error() string {
@@ -58,8 +58,10 @@ func (o *ListVolumesOK) Error() string {
 
 func (o *ListVolumesOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
+	o.Payload = new(models.Volumes)
+
 	// response payload
-	if err := consumer.Consume(response.Body(), &o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
 		return err
 	}
 

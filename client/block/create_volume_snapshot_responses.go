@@ -23,8 +23,8 @@ type CreateVolumeSnapshotReader struct {
 func (o *CreateVolumeSnapshotReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
 	switch response.Code() {
 
-	case 200:
-		result := NewCreateVolumeSnapshotOK()
+	case 202:
+		result := NewCreateVolumeSnapshotAccepted()
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
 			return nil, err
 		}
@@ -39,24 +39,24 @@ func (o *CreateVolumeSnapshotReader) ReadResponse(response runtime.ClientRespons
 	}
 }
 
-// NewCreateVolumeSnapshotOK creates a CreateVolumeSnapshotOK with default headers values
-func NewCreateVolumeSnapshotOK() *CreateVolumeSnapshotOK {
-	return &CreateVolumeSnapshotOK{}
+// NewCreateVolumeSnapshotAccepted creates a CreateVolumeSnapshotAccepted with default headers values
+func NewCreateVolumeSnapshotAccepted() *CreateVolumeSnapshotAccepted {
+	return &CreateVolumeSnapshotAccepted{}
 }
 
-/*CreateVolumeSnapshotOK handles this case with default header values.
+/*CreateVolumeSnapshotAccepted handles this case with default header values.
 
 Task Object
 */
-type CreateVolumeSnapshotOK struct {
+type CreateVolumeSnapshotAccepted struct {
 	Payload *models.Task
 }
 
-func (o *CreateVolumeSnapshotOK) Error() string {
-	return fmt.Sprintf("[POST /block/volumes/{id}/protection/snapshots.json][%d] createVolumeSnapshotOK  %+v", 200, o.Payload)
+func (o *CreateVolumeSnapshotAccepted) Error() string {
+	return fmt.Sprintf("[POST /block/volumes/{id}/protection/snapshots.json][%d] createVolumeSnapshotAccepted  %+v", 202, o.Payload)
 }
 
-func (o *CreateVolumeSnapshotOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+func (o *CreateVolumeSnapshotAccepted) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
 	o.Payload = new(models.Task)
 

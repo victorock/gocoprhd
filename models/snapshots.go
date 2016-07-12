@@ -5,6 +5,7 @@ package models
 
 import (
 	strfmt "github.com/go-openapi/strfmt"
+	"github.com/go-openapi/swag"
 
 	"github.com/go-openapi/errors"
 )
@@ -13,14 +14,33 @@ import (
 
 swagger:model Snapshots
 */
-type Snapshots []string
+type Snapshots struct {
+
+	/* id
+	 */
+	ID []string `json:"id,omitempty"`
+}
 
 // Validate validates this snapshots
-func (m Snapshots) Validate(formats strfmt.Registry) error {
+func (m *Snapshots) Validate(formats strfmt.Registry) error {
 	var res []error
+
+	if err := m.validateID(formats); err != nil {
+		// prop
+		res = append(res, err)
+	}
 
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *Snapshots) validateID(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.ID) { // not required
+		return nil
+	}
+
 	return nil
 }

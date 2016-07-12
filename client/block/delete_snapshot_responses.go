@@ -23,8 +23,8 @@ type DeleteSnapshotReader struct {
 func (o *DeleteSnapshotReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
 	switch response.Code() {
 
-	case 200:
-		result := NewDeleteSnapshotOK()
+	case 202:
+		result := NewDeleteSnapshotAccepted()
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
 			return nil, err
 		}
@@ -39,26 +39,26 @@ func (o *DeleteSnapshotReader) ReadResponse(response runtime.ClientResponse, con
 	}
 }
 
-// NewDeleteSnapshotOK creates a DeleteSnapshotOK with default headers values
-func NewDeleteSnapshotOK() *DeleteSnapshotOK {
-	return &DeleteSnapshotOK{}
+// NewDeleteSnapshotAccepted creates a DeleteSnapshotAccepted with default headers values
+func NewDeleteSnapshotAccepted() *DeleteSnapshotAccepted {
+	return &DeleteSnapshotAccepted{}
 }
 
-/*DeleteSnapshotOK handles this case with default header values.
+/*DeleteSnapshotAccepted handles this case with default header values.
 
 Task Object
 */
-type DeleteSnapshotOK struct {
-	Payload *models.Task
+type DeleteSnapshotAccepted struct {
+	Payload *models.Tasks
 }
 
-func (o *DeleteSnapshotOK) Error() string {
-	return fmt.Sprintf("[POST /block/snapshots/{id}/deactivate.json][%d] deleteSnapshotOK  %+v", 200, o.Payload)
+func (o *DeleteSnapshotAccepted) Error() string {
+	return fmt.Sprintf("[POST /block/snapshots/{id}/deactivate.json][%d] deleteSnapshotAccepted  %+v", 202, o.Payload)
 }
 
-func (o *DeleteSnapshotOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+func (o *DeleteSnapshotAccepted) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	o.Payload = new(models.Task)
+	o.Payload = new(models.Tasks)
 
 	// response payload
 	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {

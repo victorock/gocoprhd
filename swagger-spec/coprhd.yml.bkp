@@ -34,6 +34,7 @@ paths:
         response.
       tags:
         - authentication
+        - get
       operationId: Login
       responses:
         200:
@@ -60,6 +61,8 @@ paths:
         NOTE=This is an asynchronous operation."
       tags:
         - block
+        - volume
+        - post
       operationId: CreateVolume
       parameters:
         - name: body
@@ -68,10 +71,10 @@ paths:
           schema:
             $ref: '#/definitions/CreateVolume'
       responses:
-        202:
+        200:
           description: Task Object
           schema:
-            $ref: '#/definitions/Tasks'
+            $ref: '#/definitions/Task'
         default:
           description: Error Message
           schema:
@@ -95,6 +98,8 @@ paths:
          at once. NOTE: This is an asynchronous operation.
       tags:
         - block
+        - volume
+        - post
       operationId: CreateVolumeSnapshot
       parameters:
         - name: id
@@ -108,7 +113,7 @@ paths:
           schema:
             $ref: '#/definitions/CreateVolumeSnapshot'
       responses:
-        202:
+        200:
           description: Task Object
           schema:
             $ref: '#/definitions/Task'
@@ -124,6 +129,8 @@ paths:
         Retrieve all ids of this type of resources.
       tags:
         - block
+        - volume
+        - get
       operationId: ListVolumes
       responses:
         200:
@@ -142,6 +149,8 @@ paths:
         Show the details of a specific volume
       tags:
         - block
+        - volume
+        - get
       operationId: ShowVolume
       parameters:
         - name: id
@@ -168,6 +177,8 @@ paths:
         initiators that have been paired with a target storage port."
       tags:
         - block
+        - volume
+        - get
       operationId: ShowVolumeExports
       parameters:
         - name: id
@@ -193,6 +204,8 @@ paths:
         NOTE: This is an asynchronous operation."
       tags:
         - block
+        - volume
+        - post
       operationId: ExpandVolume
       parameters:
         - name: id
@@ -206,10 +219,10 @@ paths:
           schema:
             $ref: '#/definitions/ExpandVolume'
       responses:
-        202:
+        200:
           description: Task Object
           schema:
-            $ref: '#/definitions/Tasks'
+            $ref: '#/definitions/Task'
         default:
           description: Error Message
           schema:
@@ -227,6 +240,8 @@ paths:
         SUPPORTS_FORCE flag. NOTE: This is an asynchronous operation.
       tags:
         - block
+        - volume
+        - post
       operationId: DeleteVolume
       parameters:
         - name: id
@@ -235,10 +250,10 @@ paths:
           type: string
           required: true
       responses:
-        202:
+        200:
           description: Task Object
           schema:
-            $ref: '#/definitions/Tasks'
+            $ref: '#/definitions/Task'
         default:
           description: Error Message
           schema:
@@ -313,6 +328,8 @@ paths:
         communication paths.
       tags:
         - block
+        - export
+        - post
       operationId: CreateExport
       parameters:
         - name: body
@@ -321,10 +338,10 @@ paths:
           schema:
             $ref: '#/definitions/CreateExport'
       responses:
-        202:
+        200:
           description: Task Object
           schema:
-            $ref: '#/definitions/Tasks'
+            $ref: '#/definitions/Task'
         default:
           description: Error Message
           schema:
@@ -357,6 +374,8 @@ paths:
         Note: The export group name, project and varray can not be modified.
       tags:
         - block
+        - export
+        - put
       operationId: UpdateExport
       parameters:
         - name: id
@@ -370,10 +389,10 @@ paths:
           schema:
             $ref: '#/definitions/UpdateExport'
       responses:
-        202:
+        200:
           description: Task Object
           schema:
-            $ref: '#/definitions/Tasks'
+            $ref: '#/definitions/Task'
         default:
           description: Error Message
           schema:
@@ -394,18 +413,20 @@ paths:
         Export Groups.
       tags:
         - block
-      operationId: DeleteExport
+        - export
+        - post
+      operationId: DeleteExportGroup
       parameters:
         - name: id
-          description: The URN of a ViPR/CoprHD Export
+          description: The URN of a ViPR/CoprHD ExportGroup
           in: path
           type: string
           required: true
       responses:
-        202:
+        200:
           description: Task Object
           schema:
-            $ref: '#/definitions/Tasks'
+            $ref: '#/definitions/Task'
         default:
           description: Error Message
           schema:
@@ -418,6 +439,8 @@ paths:
         Retrieve all ids of this type of resources.
       tags:
         - block
+        - snapshot
+        - get
       operationId: ListSnapshots
       responses:
         200:
@@ -436,6 +459,8 @@ paths:
         Show snapshot details.
       tags:
         - block
+        - snapshot
+        - get
       operationId: ShowSnapshot
       parameters:
         - name: id
@@ -466,6 +491,8 @@ paths:
         will be deactivated, as well.
       tags:
         - block
+        - snapshot
+        - post
       operationId: DeleteSnapshot
       parameters:
         - name: id
@@ -474,10 +501,10 @@ paths:
           type: string
           required: true
       responses:
-        202:
+        200:
           description: Task Object
           schema:
-            $ref: '#/definitions/Tasks'
+            $ref: '#/definitions/Task'
         default:
           description: Error Message
           schema:
@@ -492,6 +519,8 @@ paths:
         Create a full copy as a volume of the specified snapshot.
       tags:
         - block
+        - snapshot
+        - post
       operationId: CreateSnapshotFullCopy
       parameters:
         - name: id
@@ -505,10 +534,10 @@ paths:
           schema:
             $ref: '#/definitions/CreateSnapshotFullCopy'
       responses:
-        202:
+        200:
           description: Task Object
           schema:
-            $ref: '#/definitions/Tasks'
+            $ref: '#/definitions/Task'
         default:
           description: Error Message
           schema:
@@ -521,6 +550,8 @@ paths:
         Returns a list of tasks for the specified tenant
       tags:
         - vdc
+        - task
+        - get
       operationId: ListTasks
       responses:
         200:
@@ -539,6 +570,8 @@ paths:
         Show Task details.
       tags:
         - vdc
+        - task
+        - get
       operationId: ShowTask
       parameters:
         - name: id
@@ -564,6 +597,9 @@ paths:
         (for example, wwn or initiator_port etc.)
       tags:
         - block
+        - volume
+        - search
+        - get
       operationId: ListVolumeSearch
       parameters:
         - name: item
@@ -596,48 +632,23 @@ definitions:
       link:
         $ref: '#/definitions/Link'
   Link:
-    type: object
     properties:
       rel:
         type: string
       href:
         type: string
+  Tasks:
+    type: array
+    items:
+      type: object
   Task:
     type: object
     properties:
-      inactive:
-        type: boolean
-      global:
-        type: boolean
-      remote:
-        type: boolean
-      internal:
-        type: boolean
-      progress:
-        type: integer
-      start_time:
-        type: integer
-        format: int64
-      creation_time:
-        type: integer
-        format: int64
-      vdc:
-        $ref: '#/definitions/Resource'
-      tenant:
-        $ref: '#/definitions/Resource'
       resource:
         $ref: '#/definitions/Resource'
-      link:
-        $ref: '#/definitions/Link'
-      associated_resources:
-        type: array
-        items:
-          type: string
-      tags:
-        type: array
-        items:
-          type: string
       state:
+        type: string
+      start_time:
         type: string
       op_id:
         type: string
@@ -645,13 +656,8 @@ definitions:
         type: string
       message:
         type: string
-  Tasks:
-    type: object
-    properties:
-      task:
-        type: array
-        items:
-          $ref: '#/definitions/Task'
+      link:
+        $ref: '#/definitions/Link'
   CreateVolumeSnapshot:
     type: object
     properties:
@@ -664,12 +670,9 @@ definitions:
       read_only:
         type: string
   Volumes:
-    type: object
-    properties:
-      id:
-        type: array
-        items:
-          type: string
+    type: array
+    items:
+      type: string
 # TODO: UPDATE THE VOLUME OBJECT DETAILS
   Volume:
     type: object
@@ -722,12 +725,9 @@ definitions:
             san_zone_name:
               type: string
   Snapshots:
-    type: object
-    properties:
-      id:
-        type: array
-        items:
-          type: string
+    type: array
+    items:
+      type: string
   Snapshot:
     type: object
     properties:

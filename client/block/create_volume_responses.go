@@ -23,8 +23,8 @@ type CreateVolumeReader struct {
 func (o *CreateVolumeReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
 	switch response.Code() {
 
-	case 200:
-		result := NewCreateVolumeOK()
+	case 202:
+		result := NewCreateVolumeAccepted()
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
 			return nil, err
 		}
@@ -39,26 +39,26 @@ func (o *CreateVolumeReader) ReadResponse(response runtime.ClientResponse, consu
 	}
 }
 
-// NewCreateVolumeOK creates a CreateVolumeOK with default headers values
-func NewCreateVolumeOK() *CreateVolumeOK {
-	return &CreateVolumeOK{}
+// NewCreateVolumeAccepted creates a CreateVolumeAccepted with default headers values
+func NewCreateVolumeAccepted() *CreateVolumeAccepted {
+	return &CreateVolumeAccepted{}
 }
 
-/*CreateVolumeOK handles this case with default header values.
+/*CreateVolumeAccepted handles this case with default header values.
 
 Task Object
 */
-type CreateVolumeOK struct {
-	Payload *models.Task
+type CreateVolumeAccepted struct {
+	Payload *models.Tasks
 }
 
-func (o *CreateVolumeOK) Error() string {
-	return fmt.Sprintf("[POST /block/volumes.json][%d] createVolumeOK  %+v", 200, o.Payload)
+func (o *CreateVolumeAccepted) Error() string {
+	return fmt.Sprintf("[POST /block/volumes.json][%d] createVolumeAccepted  %+v", 202, o.Payload)
 }
 
-func (o *CreateVolumeOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+func (o *CreateVolumeAccepted) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	o.Payload = new(models.Task)
+	o.Payload = new(models.Tasks)
 
 	// response payload
 	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {

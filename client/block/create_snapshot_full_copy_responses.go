@@ -23,8 +23,8 @@ type CreateSnapshotFullCopyReader struct {
 func (o *CreateSnapshotFullCopyReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
 	switch response.Code() {
 
-	case 200:
-		result := NewCreateSnapshotFullCopyOK()
+	case 202:
+		result := NewCreateSnapshotFullCopyAccepted()
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
 			return nil, err
 		}
@@ -39,26 +39,26 @@ func (o *CreateSnapshotFullCopyReader) ReadResponse(response runtime.ClientRespo
 	}
 }
 
-// NewCreateSnapshotFullCopyOK creates a CreateSnapshotFullCopyOK with default headers values
-func NewCreateSnapshotFullCopyOK() *CreateSnapshotFullCopyOK {
-	return &CreateSnapshotFullCopyOK{}
+// NewCreateSnapshotFullCopyAccepted creates a CreateSnapshotFullCopyAccepted with default headers values
+func NewCreateSnapshotFullCopyAccepted() *CreateSnapshotFullCopyAccepted {
+	return &CreateSnapshotFullCopyAccepted{}
 }
 
-/*CreateSnapshotFullCopyOK handles this case with default header values.
+/*CreateSnapshotFullCopyAccepted handles this case with default header values.
 
 Task Object
 */
-type CreateSnapshotFullCopyOK struct {
-	Payload *models.Task
+type CreateSnapshotFullCopyAccepted struct {
+	Payload *models.Tasks
 }
 
-func (o *CreateSnapshotFullCopyOK) Error() string {
-	return fmt.Sprintf("[POST /block/snapshots/{id}/protection/full-copies.json][%d] createSnapshotFullCopyOK  %+v", 200, o.Payload)
+func (o *CreateSnapshotFullCopyAccepted) Error() string {
+	return fmt.Sprintf("[POST /block/snapshots/{id}/protection/full-copies.json][%d] createSnapshotFullCopyAccepted  %+v", 202, o.Payload)
 }
 
-func (o *CreateSnapshotFullCopyOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+func (o *CreateSnapshotFullCopyAccepted) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	o.Payload = new(models.Task)
+	o.Payload = new(models.Tasks)
 
 	// response payload
 	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {

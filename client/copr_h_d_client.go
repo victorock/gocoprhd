@@ -11,15 +11,7 @@ import (
 
 	"github.com/victorock/gocoprhd/client/authentication"
 	"github.com/victorock/gocoprhd/client/block"
-	"github.com/victorock/gocoprhd/client/export"
-	"github.com/victorock/gocoprhd/client/get"
-	"github.com/victorock/gocoprhd/client/post"
-	"github.com/victorock/gocoprhd/client/put"
-	"github.com/victorock/gocoprhd/client/search"
-	"github.com/victorock/gocoprhd/client/snapshot"
-	"github.com/victorock/gocoprhd/client/task"
 	"github.com/victorock/gocoprhd/client/vdc"
-	"github.com/victorock/gocoprhd/client/volume"
 )
 
 // Default copr h d HTTP client.
@@ -30,7 +22,7 @@ func NewHTTPClient(formats strfmt.Registry) *CoprHD {
 	if formats == nil {
 		formats = strfmt.Default
 	}
-	transport := httptransport.New("localhost", "/", []string{"http", "https"})
+	transport := httptransport.New("localhost", "/", []string{"https", "http"})
 	return New(transport, formats)
 }
 
@@ -43,23 +35,7 @@ func New(transport runtime.ClientTransport, formats strfmt.Registry) *CoprHD {
 
 	cli.Block = block.New(transport, formats)
 
-	cli.Export = export.New(transport, formats)
-
-	cli.Get = get.New(transport, formats)
-
-	cli.Post = post.New(transport, formats)
-
-	cli.Put = put.New(transport, formats)
-
-	cli.Search = search.New(transport, formats)
-
-	cli.Snapshot = snapshot.New(transport, formats)
-
-	cli.Task = task.New(transport, formats)
-
 	cli.Vdc = vdc.New(transport, formats)
-
-	cli.Volume = volume.New(transport, formats)
 
 	return cli
 }
@@ -70,23 +46,7 @@ type CoprHD struct {
 
 	Block *block.Client
 
-	Export *export.Client
-
-	Get *get.Client
-
-	Post *post.Client
-
-	Put *put.Client
-
-	Search *search.Client
-
-	Snapshot *snapshot.Client
-
-	Task *task.Client
-
 	Vdc *vdc.Client
-
-	Volume *volume.Client
 
 	Transport runtime.ClientTransport
 }
@@ -99,22 +59,6 @@ func (c *CoprHD) SetTransport(transport runtime.ClientTransport) {
 
 	c.Block.SetTransport(transport)
 
-	c.Export.SetTransport(transport)
-
-	c.Get.SetTransport(transport)
-
-	c.Post.SetTransport(transport)
-
-	c.Put.SetTransport(transport)
-
-	c.Search.SetTransport(transport)
-
-	c.Snapshot.SetTransport(transport)
-
-	c.Task.SetTransport(transport)
-
 	c.Vdc.SetTransport(transport)
-
-	c.Volume.SetTransport(transport)
 
 }

@@ -23,8 +23,8 @@ type CreateExportReader struct {
 func (o *CreateExportReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
 	switch response.Code() {
 
-	case 200:
-		result := NewCreateExportOK()
+	case 202:
+		result := NewCreateExportAccepted()
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
 			return nil, err
 		}
@@ -39,26 +39,26 @@ func (o *CreateExportReader) ReadResponse(response runtime.ClientResponse, consu
 	}
 }
 
-// NewCreateExportOK creates a CreateExportOK with default headers values
-func NewCreateExportOK() *CreateExportOK {
-	return &CreateExportOK{}
+// NewCreateExportAccepted creates a CreateExportAccepted with default headers values
+func NewCreateExportAccepted() *CreateExportAccepted {
+	return &CreateExportAccepted{}
 }
 
-/*CreateExportOK handles this case with default header values.
+/*CreateExportAccepted handles this case with default header values.
 
 Task Object
 */
-type CreateExportOK struct {
-	Payload *models.Task
+type CreateExportAccepted struct {
+	Payload *models.Tasks
 }
 
-func (o *CreateExportOK) Error() string {
-	return fmt.Sprintf("[POST /block/exports.json][%d] createExportOK  %+v", 200, o.Payload)
+func (o *CreateExportAccepted) Error() string {
+	return fmt.Sprintf("[POST /block/exports.json][%d] createExportAccepted  %+v", 202, o.Payload)
 }
 
-func (o *CreateExportOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+func (o *CreateExportAccepted) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	o.Payload = new(models.Task)
+	o.Payload = new(models.Tasks)
 
 	// response payload
 	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
