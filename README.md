@@ -114,8 +114,8 @@ The Makefile utilizes [glide](https://github.com/Masterminds/glide) to reference
 | Name        | Description           |
 | ------------- |:-------------:|
 | `GOCOPRHD_ENDPOINT`      | the API endpoint. `localhost:4443` is used by default if not set             |
-| `GOCOPRHD_USERNAME`      | The Username to authenticate             |
-| `GOCOPRHD_PASSWORD`      | The password for authentication             |
+| `GOCOPRHD_USERNAME`      | The Username for Authentication/Login             |
+| `GOCOPRHD_PASSWORD`      | The password for authentication/Login             |
 | `GOCOPRHD_TOKEN`      | The token provided by CoprHD/ViPR administrator             |
 
 
