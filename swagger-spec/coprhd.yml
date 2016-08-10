@@ -408,7 +408,7 @@ paths:
 
         Note: The export group name, project and varray can not be modified.
       tags:
-        - compute
+        - block
       operationId: UpdateExport
       parameters:
         - name: id
@@ -430,6 +430,30 @@ paths:
           description: Error Message
           schema:
             $ref: '#/definitions/Error'
+    get:
+      summary: |
+        Show Export Group
+      description: |
+        Get block export details - the list of volumes and snapshots and the
+        list of SCSI initiators that the shared storage is exported to.
+      tags:
+        - block
+      operationId: ShowExport
+      parameters:
+        - name: id
+          description: The URN of a ViPR/CoprHD ExportGroup
+          in: path
+          type: string
+          required: true
+      responses:
+        200:
+          description: Export Object
+          schema:
+            $ref: '#/definitions/Export'
+        default:
+          description: Error Message
+          schema:
+            $ref: '#/definitions/Error'
   /block/exports/{id}/deactivate.json:
     post:
       summary: |
@@ -445,7 +469,7 @@ paths:
         Group Create), they will be removed if they are not in use by other
         Export Groups.
       tags:
-        - compute
+        - block
       operationId: DeleteExport
       parameters:
         - name: id
@@ -741,6 +765,65 @@ definitions:
           - NATIVE
       read_only:
         type: boolean
+  Hosts:
+    type: object
+    properties:
+      id:
+        type: array
+        items:
+          type: string
+  Export:
+    allOf:
+      - $ref: '#/definitions/Resource'
+      - type: object
+        properties:
+          inactive:
+            type: boolean
+          tags:
+            type: array
+            items:
+              type: string
+          volumes:
+            type: array
+            items:
+              type: object
+              properties:
+                id:
+                  type: string
+                lun:
+                  type: string
+          initiators:
+            type: array
+            items:
+              $ref: '#/definitions/Initiator'
+  Initiator:
+    allOf:
+      - $ref: '#/definitions/Resource'
+      - type: object
+        properties:
+          inactive:
+            type: boolean
+          tags:
+            type: array
+            items:
+              type: string
+          host:
+            $ref: '#/definitions/Resource'
+          protocol:
+            type: string
+            enum:
+              - FC
+              # Confirm the iSCSI Word
+              - iSCSI
+              - ScaleIO
+          creation_time:
+            type: integer
+          hostname:
+            type: string
+          initiator_node:
+            type: string
+          initiator_port:
+            type: string
   Volumes:
     type: object
     properties:
