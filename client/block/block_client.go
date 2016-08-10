@@ -154,6 +154,43 @@ func (a *Client) CreateVolumeSnapshot(params *CreateVolumeSnapshotParams, authIn
 }
 
 /*
+DeleteExport deletes export group
+
+Deactivate block export. It will be deleted by the garbage collector on
+a subsequent iteration
+
+This removes visibility of shared storage in the block export to servers
+through initiators in the block export.
+
+If SAN Zones were created as a result of this Export Group (see Export
+Group Create), they will be removed if they are not in use by other
+Export Groups.
+
+*/
+func (a *Client) DeleteExport(params *DeleteExportParams, authInfo runtime.ClientAuthInfoWriter) (*DeleteExportAccepted, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDeleteExportParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "DeleteExport",
+		Method:             "POST",
+		PathPattern:        "/block/exports/{id}/deactivate.json",
+		ProducesMediaTypes: []string{"application/json", "application/x-gzip"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http", "https"},
+		Params:             params,
+		Reader:             &DeleteExportReader{formats: a.formats},
+		AuthInfo:           authInfo,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*DeleteExportAccepted), nil
+}
+
+/*
 DeleteSnapshot deactivates snapshot
 
 Deactivate volume snapshot, this will move the snapshot to a
@@ -399,6 +436,36 @@ func (a *Client) ListVolumes(params *ListVolumesParams, authInfo runtime.ClientA
 }
 
 /*
+ShowExport shows export group
+
+Get block export details - the list of volumes and snapshots and the
+list of SCSI initiators that the shared storage is exported to.
+
+*/
+func (a *Client) ShowExport(params *ShowExportParams, authInfo runtime.ClientAuthInfoWriter) (*ShowExportOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewShowExportParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "ShowExport",
+		Method:             "GET",
+		PathPattern:        "/block/exports/{id}.json",
+		ProducesMediaTypes: []string{"application/json", "application/x-gzip"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http", "https"},
+		Params:             params,
+		Reader:             &ShowExportReader{formats: a.formats},
+		AuthInfo:           authInfo,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*ShowExportOK), nil
+}
+
+/*
 ShowSnapshot shows snapshot
 
 Show snapshot details.
@@ -454,6 +521,55 @@ func (a *Client) ShowVolume(params *ShowVolumeParams, authInfo runtime.ClientAut
 		return nil, err
 	}
 	return result.(*ShowVolumeOK), nil
+}
+
+/*
+UpdateExport updates export group
+
+Update an export group which includes:
+    Add/Remove block objects (volumes, mirrors and snapshots)
+    Add/remove clusters
+    Add/remove hosts
+    Add/remove initiators
+
+Depending on the export group type (Initiator, Host or Cluster), the
+request is restricted to enforce the same rules as
+{@link #createExportGroup(ExportCreateParam)}:
+    For initiator type groups, only initiators are accepted in the
+    request. Further the initiators must be in the same host as the
+    existing initiators.
+
+    For host type groups, only hosts and initiators that belong to
+    existing hosts will be accepted.
+
+    For cluster type groups, only clusters, hosts and initiators will
+    be accepted. Hosts and initiators must belong to existing clusters
+    and hosts.
+
+Note: The export group name, project and varray can not be modified.
+
+*/
+func (a *Client) UpdateExport(params *UpdateExportParams, authInfo runtime.ClientAuthInfoWriter) (*UpdateExportAccepted, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewUpdateExportParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "UpdateExport",
+		Method:             "PUT",
+		PathPattern:        "/block/exports/{id}.json",
+		ProducesMediaTypes: []string{"application/json", "application/x-gzip"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http", "https"},
+		Params:             params,
+		Reader:             &UpdateExportReader{formats: a.formats},
+		AuthInfo:           authInfo,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*UpdateExportAccepted), nil
 }
 
 // SetTransport changes the transport on the client
