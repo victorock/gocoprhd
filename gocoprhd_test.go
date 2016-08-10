@@ -14,7 +14,6 @@ import (
 
 	apiclient "github.com/victorock/gocoprhd/client"
 	"github.com/victorock/gocoprhd/client/block"
-	"github.com/victorock/gocoprhd/client/compute"
 	"github.com/victorock/gocoprhd/client/vdc"
 	"github.com/victorock/gocoprhd/models"
 )
@@ -336,11 +335,11 @@ func TestCreateExport(t *testing.T) {
 	}
 
 	// Create Object to Request
-	createExportParams := compute.NewCreateExportParams().
+	createExportParams := block.NewCreateExportParams().
 		WithBody(b)
 
 	//use any function to do REST operations
-	resp, err := client.Compute.CreateExport(createExportParams, authInfo)
+	resp, err := client.Block.CreateExport(createExportParams, authInfo)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -353,11 +352,11 @@ func TestDeleteExport(t *testing.T) {
 	client, authInfo := Init()
 
 	// Create Object to Request
-	deleteExportParams := compute.NewDeleteExportParams().
+	deleteExportParams := block.NewDeleteExportParams().
 		WithID("urn:storageos:ExportGroup:73e5cedd-093e-43e2-a7a3-1ddba22fb579:vdc1")
 
 	//use any function to do REST operations
-	resp, err := client.Compute.DeleteExport(deleteExportParams, authInfo)
+	resp, err := client.Block.DeleteExport(deleteExportParams, authInfo)
 	if err != nil {
 		log.Fatal(err)
 	}
